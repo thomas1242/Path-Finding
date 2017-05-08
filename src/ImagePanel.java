@@ -44,7 +44,8 @@ public class ImagePanel extends JLayeredPane {
 
     public void setStartPoint(int x, int y) {
 
-        isValidLoc(x, y);
+        if( !isValidLoc(x, y) )
+            return;
 
         if(grid[x][y].isPassable)
             startPoint = new CellLoc(x, y);
@@ -57,7 +58,8 @@ public class ImagePanel extends JLayeredPane {
 
     public void setEndPoint(int x, int y) {
 
-        isValidLoc(x, y);
+       if( !isValidLoc(x, y) )
+            return;
 
         if(grid[x][y].isPassable)
             endPoint = new CellLoc(x, y);
@@ -163,7 +165,8 @@ public class ImagePanel extends JLayeredPane {
                 int x = (int)point.getX() / cell_width;
                 int y = (int)point.getY() / cell_width;
 
-                isValidLoc(x, y);
+                if( !isValidLoc(x, y) )
+                    return;
 
                 if(startPoint.x == x && startPoint.y == y)
                     draggingStart = true;
@@ -207,7 +210,8 @@ public class ImagePanel extends JLayeredPane {
                 int x = (int) point.getX() / cell_width;
                 int y = (int) point.getY() / cell_width;
 
-                isValidLoc(x, y);
+                if( !isValidLoc(x, y) )
+                    return;
 
                 CellLoc newLoc = new CellLoc(x, y);
 

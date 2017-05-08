@@ -8,12 +8,12 @@ Clone the repository.
 
 ```javascript
 git clone https://github.com/thomas1242/Path-Finding/
+cd Path-Finding/src
 ```
 
 Compile and run the source code.
 
 ```javascript
-cd Path-Finding/src
 javac Main.java
 java Main
 ```

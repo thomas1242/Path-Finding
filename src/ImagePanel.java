@@ -1,22 +1,29 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 public class ImagePanel extends JLayeredPane {
 
     private BufferedImage image = null;
     private Graphics2D g2d = null;
+
     private Node[][] grid = null;
     private int cell_width = 60;
+    public int frame_delay = 32;
 
     CellLoc startPoint, endPoint;
     boolean draggingStart = false, draggingEnd = false;
     boolean drawingWalls = false, erasingWalls = false;
 
+    // view components
     private CellWidthSlider cellWidthSlider;
+    private StartStopPanel startStopPanel;
 
     public ImagePanel(int width, int height) {
         setBounds(0, 0, width, height);
@@ -34,7 +41,6 @@ public class ImagePanel extends JLayeredPane {
         defaultStartEndLocs();
 
         drawAll();
-
         repaint();
     }
 
@@ -48,7 +54,7 @@ public class ImagePanel extends JLayeredPane {
             return;
 
         if(grid[x][y].isPassable)
-            startPoint = new CellLoc(x, y);
+            startPoint = new CellLoc(x, y, grid[x][y]);
     }
 
     public void drawStartPoint() {
@@ -58,11 +64,11 @@ public class ImagePanel extends JLayeredPane {
 
     public void setEndPoint(int x, int y) {
 
-       if( !isValidLoc(x, y) )
+        if( !isValidLoc(x, y) )
             return;
 
         if(grid[x][y].isPassable)
-            endPoint = new CellLoc(x, y);
+            endPoint = new CellLoc(x, y, grid[x][y]);
     }
 
     public void drawEndPoint() {
@@ -77,11 +83,13 @@ public class ImagePanel extends JLayeredPane {
 
     public void addComponents() {
         cellWidthSlider = new CellWidthSlider(this);
+        startStopPanel = new StartStopPanel(this);
         add(cellWidthSlider, new Integer(3));
+        add(startStopPanel, new Integer(3));
     }
 
     public void createGrid() {
-        grid = new Node[image.getWidth()/cell_width][image.getHeight()/cell_width];
+        grid = new Node[image.getWidth()/cell_width + 1][image.getHeight()/cell_width + 1];
         for (int i = 0; i < grid.length; i++)
             for (int j = 0; j < grid[i].length; j++)
                 grid[i][j] = new Node();
@@ -107,15 +115,27 @@ public class ImagePanel extends JLayeredPane {
         g2d.setColor(Color.white);
         g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
 
-
         g2d.setColor(Color.GRAY);
+
         // grid cells
-        for (int i = 0; i < grid.length; i++)
-            for (int j = 0; j < grid[i].length; j++)
-                if( !grid[i][j].isPassable )
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (!grid[i][j].isPassable) {
                     g2d.fillRect(i * cell_width + 1, j * cell_width + 1, cell_width - 1, cell_width - 1);
-
-
+                } else if (grid[i][j].inQueue) {
+                    g2d.setColor(Color.orange);
+                    g2d.fillRect(i * cell_width + 1, j * cell_width + 1, cell_width - 1, cell_width - 1);
+                    g2d.setColor(Color.GRAY);
+                    // draw to be processed color
+                }
+                else if (grid[i][j].isVisited) {
+                    g2d.setColor(Color.blue);
+                    g2d.fillRect(i * cell_width + 1, j * cell_width + 1, cell_width - 1, cell_width - 1);
+                    g2d.setColor(Color.GRAY);
+                    // draw been processed color
+                }
+            }
+        }
 
 
         // grid lines
@@ -136,7 +156,27 @@ public class ImagePanel extends JLayeredPane {
         defaultStartEndLocs();
 
         drawAll();
+        repaint();
+    }
 
+    public void clearWalls() {
+        for (int i = 0; i < grid.length; i++)
+            for (int j = 0; j < grid[i].length; j++)
+                grid[i][j].isPassable = true;
+
+        drawAll();
+        repaint();
+    }
+
+    public void clearPath() {
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                grid[i][j].isVisited = false;
+                grid[i][j].inQueue = false;
+            }
+        }
+
+        drawAll();
         repaint();
     }
 
@@ -144,7 +184,6 @@ public class ImagePanel extends JLayeredPane {
         drawGrid();
         drawEndPoint();
         drawStartPoint();
-        repaint();
     }
 
 
@@ -213,7 +252,7 @@ public class ImagePanel extends JLayeredPane {
                 if( !isValidLoc(x, y) )
                     return;
 
-                CellLoc newLoc = new CellLoc(x, y);
+                CellLoc newLoc = new CellLoc(x, y, null);
 
                 if( endPoint.equals(newLoc) || startPoint.equals(newLoc))   // do nothing
                     return;
@@ -228,15 +267,58 @@ public class ImagePanel extends JLayeredPane {
                     grid[ x ][ y ].isPassable = true;
 
                 drawAll();
+                repaint();
             }
 
-            public void mouseMoved(MouseEvent event) {
-                Point point = event.getPoint();
-
-
-
-            }
+            public void mouseMoved(MouseEvent event) {}
         });
+
+    }
+
+
+    public void BFS() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+
+        LinkedList<Node> q = new LinkedList<Node>();
+        q.add( grid[ startPoint.x ][ startPoint.y ] );
+
+        while( !q.isEmpty() ) {
+
+            Node curr = q.poll();
+            curr.isVisited = true;
+            curr.inQueue = false;
+
+            drawAll();
+            repaint();
+
+            if(curr.equals(endPoint.node)) {
+                System.out.println("found it ");
+                break;
+            }
+
+            try {
+                Thread.sleep(frame_delay);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            for (Node n : curr.neighbors) {
+                if(!n.isVisited && n.isPassable) {
+                    q.add(n);
+                    n.inQueue = true;
+                    n.isVisited = true;
+                }
+            }
+
+        }
+
+
+            }
+        }).start();
 
     }
 

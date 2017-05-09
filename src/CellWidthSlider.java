@@ -22,6 +22,7 @@ public class CellWidthSlider extends JPanel {
             @Override
             public void stateChanged(ChangeEvent e) {
                 int size = gridSlider.getValue();
+
                 label.setText(" Rows: " + String.valueOf(imagePanel.getHeight() / size + 1) + " Columns: " + String.valueOf(imagePanel.getWidth() / size + 1));
                 imagePanel.updateCellSize( size );
             }

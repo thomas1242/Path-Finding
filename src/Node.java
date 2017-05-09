@@ -1,13 +1,17 @@
+
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 class Node{
 
-    ArrayList<Node> neighbors;
+    LinkedList<Node> neighbors;
     boolean isPassable = true;
+    boolean isVisited = false;
+    boolean inQueue = false;
 
     public Node() {
 
-        neighbors = new ArrayList<Node>();
+        neighbors = new LinkedList<Node>();
 
     }
 }

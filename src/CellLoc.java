@@ -1,4 +1,3 @@
-
 public class CellLoc {
     int x;
     int y;

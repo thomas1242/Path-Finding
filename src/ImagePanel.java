@@ -1,12 +1,11 @@
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Stack;
 
 public class ImagePanel extends JLayeredPane {
 
@@ -20,10 +19,6 @@ public class ImagePanel extends JLayeredPane {
     CellLoc startPoint, endPoint;
     boolean draggingStart = false, draggingEnd = false;
     boolean drawingWalls = false, erasingWalls = false;
-
-    // view components
-    private CellWidthSlider cellWidthSlider;
-    private StartStopPanel startStopPanel;
 
     public ImagePanel(int width, int height) {
         setBounds(0, 0, width, height);
@@ -82,10 +77,7 @@ public class ImagePanel extends JLayeredPane {
     }
 
     public void addComponents() {
-        cellWidthSlider = new CellWidthSlider(this);
-        startStopPanel = new StartStopPanel(this);
-        add(cellWidthSlider, new Integer(3));
-        add(startStopPanel, new Integer(3));
+        add(new StartStopPanel(this), new Integer(3));
     }
 
     public void createGrid() {
@@ -186,8 +178,6 @@ public class ImagePanel extends JLayeredPane {
         drawStartPoint();
     }
 
-
-
     public void addListeners() {
 
 
@@ -282,40 +272,37 @@ public class ImagePanel extends JLayeredPane {
             @Override
             public void run() {
 
+                LinkedList<Node> q = new LinkedList<Node>();
+                q.add( grid[ startPoint.x ][ startPoint.y ] );
 
-        LinkedList<Node> q = new LinkedList<Node>();
-        q.add( grid[ startPoint.x ][ startPoint.y ] );
+                while( !q.isEmpty() ) {
 
-        while( !q.isEmpty() ) {
+                    Node curr = q.poll();
+                    curr.isVisited = true;
+                    curr.inQueue = false;
 
-            Node curr = q.poll();
-            curr.isVisited = true;
-            curr.inQueue = false;
+                    drawAll();
+                    repaint();
 
-            drawAll();
-            repaint();
+                    if(curr.equals(endPoint.node)) {
+                        break;
+                    }
 
-            if(curr.equals(endPoint.node)) {
-                System.out.println("found it ");
-                break;
-            }
+                    try {
+                        Thread.sleep(frame_delay);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
-            try {
-                Thread.sleep(frame_delay);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+                    for (Node n : curr.neighbors) {
+                        if(!n.isVisited && n.isPassable) {
+                            q.add(n);
+                            n.inQueue = true;
+                            n.isVisited = true;
+                        }
+                    }
 
-            for (Node n : curr.neighbors) {
-                if(!n.isVisited && n.isPassable) {
-                    q.add(n);
-                    n.inQueue = true;
-                    n.isVisited = true;
                 }
-            }
-
-        }
-
 
             }
         }).start();
@@ -323,8 +310,48 @@ public class ImagePanel extends JLayeredPane {
     }
 
 
+    public void DFS() {
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
+                Stack<Node> stack = new Stack<Node>();
+                stack.push( grid[ startPoint.x ][ startPoint.y ] );
+
+                while( !stack.isEmpty() ) {
+
+                    Node curr = stack.pop();
+                    curr.isVisited = true;
+                    curr.inQueue = false;
+
+                    drawAll();
+                    repaint();
+
+                    if(curr.equals(endPoint.node)) {
+                        break;
+                    }
+
+                    try {
+                        Thread.sleep(frame_delay);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    for (Node n : curr.neighbors) {
+                        if(!n.isVisited && n.isPassable) {
+                            stack.push(n);
+                            n.inQueue = true;
+                            n.isVisited = true;
+                        }
+                    }
+
+                }
+
+            }
+        }).start();
+
+    }
 
 
     protected void paintComponent(Graphics g) {

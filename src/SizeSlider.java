@@ -1,3 +1,6 @@
+
+
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -14,6 +17,8 @@ public class SizeSlider extends JPanel {
         this.imagePanel = imagePanel;
 
         label = new JLabel();
+        label.setFont(new Font("plain", Font.BOLD, 13));
+
         slider = new JSlider(2, 240, 60);
         label.setText(" Rows: " + String.valueOf(imagePanel.getHeight() / slider.getValue() + 1) + " Columns: " + String.valueOf(imagePanel.getWidth() / slider.getValue() + 1));
 

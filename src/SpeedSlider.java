@@ -1,3 +1,6 @@
+
+
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -14,6 +17,8 @@ public class SpeedSlider extends JPanel {
         this.imagePanel = imagePanel;
 
         label = new JLabel(" Speed");
+        label.setFont(new Font("plain", Font.BOLD, 13));
+
         slider = new JSlider(16, 256, 32);
         slider.addChangeListener(new ChangeListener() {
             @Override

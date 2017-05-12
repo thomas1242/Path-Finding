@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -26,14 +27,10 @@ public class ImagePanel extends JLayeredPane {
         g2d = (Graphics2D)image.getGraphics();
 
         createGrid();
-
         setNeighbors();
-
-        addComponents();
-
-        addListeners();
-
         defaultStartEndLocs();
+        addComponents();
+        addListeners();
 
         drawAll();
         repaint();

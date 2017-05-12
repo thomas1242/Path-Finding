@@ -1,7 +1,10 @@
+
+
 public class CellLoc {
     int x;
     int y;
     Node node;
+    
     public CellLoc(int x, int y, Node node) {
         this.x = x;
         this.y = y;

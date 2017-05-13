@@ -29,6 +29,11 @@ public class ImagePanel extends JLayeredPane {
     Color edge_color       =  new Color(0xFFFFD034);
     Color grid_color       =  new Color(0, 0, 0, 255);
 
+    Color path_cell_color = new Color(255, 255, 240, 255);
+    Color path_line_color = Color.BLACK;
+
+
+
     public ImagePanel(int width, int height) {
         setBounds(0, 0, width, height);
         image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -139,6 +144,7 @@ public class ImagePanel extends JLayeredPane {
         }
 
         // grid lines
+        g2d.setStroke( new BasicStroke( 1.0f,  BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND ) );
         g2d.setColor(grid_color);
         for (int i = 0; i < image.getHeight(); i+=cell_width)
             g2d.drawLine(0, i, image.getWidth(), i );
@@ -158,8 +164,8 @@ public class ImagePanel extends JLayeredPane {
          int y1 = n1.y * cell_width + cell_width / 2 + 1;
          int x2 = n2.x * cell_width + cell_width / 2 + 1;
          int y2 = n2.y * cell_width + cell_width / 2 + 1;
-         g2d.setStroke( new BasicStroke( 3.0f,  BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND ) );
-         g2d.setColor(Color.BLACK);
+         g2d.setStroke( new BasicStroke( 4.0f,  BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND ) );
+         g2d.setColor(path_line_color);
          g2d.drawLine(x1, y1, x2, y2);
     }
 
@@ -334,7 +340,7 @@ public class ImagePanel extends JLayeredPane {
                 Node prev = curr;
                 curr = curr.parent;
                 while(curr.parent != null) {
-                    drawCell(curr.x, curr.y, Color.WHITE);
+                    drawCell(curr.x, curr.y, path_cell_color);
                     if(prev != null)
                         drawLineBetweenTwoCells(prev, curr);
                     repaint();

@@ -17,11 +17,11 @@ java Main
 
 ## Usage
 
-Drag your mouse to draw/erase obstacles. <br>
-Drag the green node to choose the start location. <br>
-Drag the red node to choose the end location. <br>
-Select an algorithm.<br>
-Click start search.<br>
+* Drag your mouse to draw/erase obstacles. <br>
+* Drag the green node to choose the start location. <br>
+* Drag the red node to choose the end location. <br>
+* Select an algorithm.<br>
+* Click start search.<br>
 
 
 ![DFS and BFS](/images/DFSvsBFS.gif)

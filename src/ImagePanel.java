@@ -32,6 +32,12 @@ public class ImagePanel extends JLayeredPane {
         image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         g2d = (Graphics2D)image.getGraphics();
 
+
+        visited_color = Color.LIGHT_GRAY;
+        passable_color = Color.GRAY;
+        edge_color = new Color(0xFFFFEB7F);
+        impassable_color = Color.BLACK;
+
         createGrid();
         setNeighbors();
         defaultStartEndLocs();

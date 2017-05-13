@@ -26,3 +26,9 @@ Drag the red node to choose the end location.  <br>
 Select an algorithm. <br>
 Click start search. <br>
 
+
+![pic](/images/pic.png)
+
+
+
+

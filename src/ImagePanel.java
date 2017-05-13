@@ -7,6 +7,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.Stack;
+import java.awt.geom.*;
+
 
 public class ImagePanel extends JLayeredPane {
 
@@ -86,9 +88,11 @@ public class ImagePanel extends JLayeredPane {
 
     public void createGrid() {
         grid = new Node[image.getWidth()/cell_width + 1][image.getHeight()/cell_width + 1];
-        for (int i = 0; i < grid.length; i++)
-            for (int j = 0; j < grid[i].length; j++)
-                grid[i][j] = new Node();
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                grid[i][j] = new Node(i, j);
+            }
+        }
     }
 
     public void setNeighbors() {    // O( 9*nm where n = #rows, m = #cols)
@@ -141,6 +145,24 @@ public class ImagePanel extends JLayeredPane {
         for (int i = 0; i < image.getWidth(); i+=cell_width)
             g2d.drawLine(i, 0, i, image.getHeight() );
     }
+
+    public void drawCell(int x, int y, Color color) {
+         x = x * cell_width + 1;
+         y = y * cell_width + 1;
+         g2d.setColor(color);
+         g2d.fillRect(x, y, cell_width - 1, cell_width - 1);
+    }
+
+    public void drawLineBetweenTwoCells(Node n1, Node n2) {
+         int x1 = n1.x * cell_width + cell_width / 2 + 1;
+         int y1 = n1.y * cell_width + cell_width / 2 + 1;
+         int x2 = n2.x * cell_width + cell_width / 2 + 1;
+         int y2 = n2.y * cell_width + cell_width / 2 + 1;
+         g2d.setStroke( new BasicStroke( 3.0f,  BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND ) );
+         g2d.setColor(Color.BLACK);
+         g2d.drawLine(x1, y1, x2, y2);
+    }
+
 
     public void updateCellSize(int size) {
         cell_width = size;
@@ -276,13 +298,15 @@ public class ImagePanel extends JLayeredPane {
                 LinkedList<Node> q = new LinkedList<Node>();
                 q.add( grid[ startPoint.x ][ startPoint.y ] );
 
-                Node curr;
+                Node curr = null;
 
                 while( !q.isEmpty() ) {
 
                     curr = q.poll();
                     curr.isVisited = true;
                     curr.inQueue = false;
+
+
 
                     drawAll();
 
@@ -300,11 +324,28 @@ public class ImagePanel extends JLayeredPane {
                             q.add(n);
                             n.inQueue = true;
                             n.isVisited = true;
+                            n.parent = curr;
                         }
                     }
 
                 }
 
+                int k = 0;
+                Node prev = curr;
+                curr = curr.parent;
+                while(curr.parent != null) {
+                    drawCell(curr.x, curr.y, Color.WHITE);
+                    if(prev != null)
+                        drawLineBetweenTwoCells(prev, curr);
+                    repaint();
+                    try {
+                        Thread.sleep(frame_delay);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    prev = curr;
+                    curr = curr.parent;
+                }
             }
         }).start();
 

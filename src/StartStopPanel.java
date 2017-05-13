@@ -121,7 +121,7 @@ public class StartStopPanel extends JPanel {
         add(new SizeSlider(imagePanel));
         add(clearPanel);
 
-        setBackground(new Color(100, 100, 100, 150));
+        setBackground(new Color(100, 100, 100, 200));
         // this.setBorder(BorderFactory.createLineBorder(new Color(0xFF000000), 2));
         setVisible(true);
         setOpaque(true);

@@ -27,7 +27,7 @@ Select an algorithm. <br>
 Click start search. <br>
 
 
-![pic](/images/pic.png)
+![lucky DFS](/images/lucky_DFS.gif)
 
 
 

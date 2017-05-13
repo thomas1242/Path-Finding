@@ -35,7 +35,7 @@ public class ImagePanel extends JLayeredPane {
 
         visited_color = Color.LIGHT_GRAY;
         passable_color = Color.GRAY;
-        edge_color = new Color(0xFFFFEB7F);
+        edge_color = new Color(0xffFFF1A5);
         impassable_color = Color.BLACK;
 
         createGrid();

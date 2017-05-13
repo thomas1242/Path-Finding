@@ -19,7 +19,7 @@ public class SpeedSlider extends JPanel {
         label = new JLabel(" Speed");
         label.setFont(new Font("plain", Font.BOLD, 13));
 
-        slider = new JSlider(16, 256, 32);
+        slider = new JSlider(16, 256, 64);
         slider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {

@@ -21,6 +21,14 @@ public class ImagePanel extends JLayeredPane {
     boolean draggingStart = false, draggingEnd = false;
     boolean drawingWalls = false, erasingWalls = false;
 
+    Color passable_color =  new Color(255, 255, 250, 255);
+    Color impassable_color =  Color.GRAY;
+    Color visited_color =  new Color(0x22A7F0);
+    Color edge_color =  new Color(0xFFFFD034);
+    Color grid_color =  new Color(0, 0, 0, 255);
+
+
+
     public ImagePanel(int width, int height) {
         setBounds(0, 0, width, height);
         image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -33,7 +41,6 @@ public class ImagePanel extends JLayeredPane {
         addListeners();
 
         drawAll();
-        repaint();
     }
 
     public boolean isValidLoc(int x, int y) {
@@ -84,16 +91,15 @@ public class ImagePanel extends JLayeredPane {
                 grid[i][j] = new Node();
     }
 
-    public void setNeighbors() {
+    public void setNeighbors() {    // O( 9*nm where n = #rows, m = #cols)
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 for (int n = -1; n <= 1; n++) {
                     for (int m = -1; m <= 1; m++) {
                         int x_step = i + n;
                         int y_step = j + m;
-                        if (!(i == x_step && j == y_step) &&x_step < grid.length && x_step >= 0 && y_step < grid[i].length && y_step >= 0) {
+                        if (!(i == x_step && j == y_step) && x_step < grid.length && x_step >= 0 && y_step < grid[i].length && y_step >= 0) 
                             grid[i][j].neighbors.add(grid[x_step][y_step]);
-                        }
                     }
                 }
             }
@@ -101,34 +107,30 @@ public class ImagePanel extends JLayeredPane {
     }
 
     public void drawGrid() {
-        g2d.setColor(Color.white);
+        g2d.setColor(passable_color);
         g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
-
-        g2d.setColor(Color.GRAY);
 
         // grid cells
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
+
                 if (!grid[i][j].isPassable) {
+                    g2d.setColor(impassable_color);
                     g2d.fillRect(i * cell_width + 1, j * cell_width + 1, cell_width - 1, cell_width - 1);
-                } else if (grid[i][j].inQueue) {
-                    g2d.setColor(Color.orange);
+                } 
+                else if (grid[i][j].inQueue) {
+                    g2d.setColor(edge_color);
                     g2d.fillRect(i * cell_width + 1, j * cell_width + 1, cell_width - 1, cell_width - 1);
-                    g2d.setColor(Color.GRAY);
-                    // draw to be processed color
                 }
                 else if (grid[i][j].isVisited) {
-                    g2d.setColor(Color.blue);
+                    g2d.setColor(visited_color);
                     g2d.fillRect(i * cell_width + 1, j * cell_width + 1, cell_width - 1, cell_width - 1);
-                    g2d.setColor(Color.GRAY);
-                    // draw been processed color
                 }
             }
         }
 
-
         // grid lines
-        g2d.setColor(Color.black);
+        g2d.setColor(grid_color);
         for (int i = 0; i < image.getHeight(); i+=cell_width)
             g2d.drawLine(0, i, image.getWidth(), i );
         for (int i = 0; i < image.getWidth(); i+=cell_width)
@@ -145,7 +147,6 @@ public class ImagePanel extends JLayeredPane {
         defaultStartEndLocs();
 
         drawAll();
-        repaint();
     }
 
     public void clearWalls() {
@@ -154,7 +155,6 @@ public class ImagePanel extends JLayeredPane {
                 grid[i][j].isPassable = true;
 
         drawAll();
-        repaint();
     }
 
     public void clearPath() {
@@ -166,13 +166,13 @@ public class ImagePanel extends JLayeredPane {
         }
 
         drawAll();
-        repaint();
     }
 
     public void drawAll() {
         drawGrid();
         drawEndPoint();
         drawStartPoint();
+        repaint();
     }
 
     public void addListeners() {
@@ -254,7 +254,6 @@ public class ImagePanel extends JLayeredPane {
                     grid[ x ][ y ].isPassable = true;
 
                 drawAll();
-                repaint();
             }
 
             public void mouseMoved(MouseEvent event) {}
@@ -272,19 +271,19 @@ public class ImagePanel extends JLayeredPane {
                 LinkedList<Node> q = new LinkedList<Node>();
                 q.add( grid[ startPoint.x ][ startPoint.y ] );
 
+                Node curr;
+
                 while( !q.isEmpty() ) {
 
-                    Node curr = q.poll();
+                    curr = q.poll();
                     curr.isVisited = true;
                     curr.inQueue = false;
 
                     drawAll();
-                    repaint();
 
-                    if(curr.equals(endPoint.node)) {
+                    if(curr.equals(endPoint.node)) 
                         break;
-                    }
-
+                    
                     try {
                         Thread.sleep(frame_delay);
                     } catch (InterruptedException e) {
@@ -316,18 +315,18 @@ public class ImagePanel extends JLayeredPane {
                 Stack<Node> stack = new Stack<Node>();
                 stack.push( grid[ startPoint.x ][ startPoint.y ] );
 
+                Node curr;
+
                 while( !stack.isEmpty() ) {
 
-                    Node curr = stack.pop();
+                    curr = stack.pop();
                     curr.isVisited = true;
                     curr.inQueue = false;
 
                     drawAll();
-                    repaint();
 
-                    if(curr.equals(endPoint.node)) {
+                    if(curr.equals(endPoint.node)) 
                         break;
-                    }
 
                     try {
                         Thread.sleep(frame_delay);
@@ -352,7 +351,6 @@ public class ImagePanel extends JLayeredPane {
 
 
     protected void paintComponent(Graphics g) {
-        g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
-        super.paintComponent(g);
+        g.drawImage(image, 0, 0, null);
     }
 }

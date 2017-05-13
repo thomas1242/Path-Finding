@@ -14,7 +14,6 @@ public class DisplayFrame extends JFrame {
         this.setSize( width, height );
         imagePanel = new ImagePanel(width, height);
         add(imagePanel, BorderLayout.CENTER);
-
         repaint();
     }
 }

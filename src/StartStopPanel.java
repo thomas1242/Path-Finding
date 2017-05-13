@@ -122,7 +122,7 @@ public class StartStopPanel extends JPanel {
         add(clearPanel);
 
         setBackground(new Color(100, 100, 100, 150));
-        this.setBorder(BorderFactory.createLineBorder(new Color(0x11111111), 2));
+        // this.setBorder(BorderFactory.createLineBorder(new Color(0xFF000000), 2));
         setVisible(true);
         setOpaque(true);
     }

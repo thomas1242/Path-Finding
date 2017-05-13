@@ -1,22 +1,20 @@
-
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
-public class StartStopPanel extends JPanel {
+public class ControlPanel extends JPanel {
 
-    ImagePanel imagePanel;
-    JButton startSearch;
-    JButton clearObstacles, clearPath;
-    JButton startBFS, startDFS, dijkstra, a_star;
-    boolean BFS, DFS, Dijkstra, A_star;
+    private ImagePanel imagePanel;
+    private boolean BFS, DFS, Dijkstra, A_star;
+    private JButton startBFS, startDFS, dijkstra, a_star;
 
-    public StartStopPanel(ImagePanel imagePanel) {
+    public ControlPanel(ImagePanel imagePanel) {
         setLayout(new GridLayout(0, 1));
         this.imagePanel = imagePanel;
         setBounds(900, (int)(imagePanel.getHeight() * .25), 200, (int)(imagePanel.getHeight() * .5)  );
+
+        JButton startSearch;
+        JButton clearObstacles, clearPath;
 
         startSearch = new JButton(" Start search");
         startSearch.addActionListener(new ActionListener() {
@@ -27,7 +25,6 @@ public class StartStopPanel extends JPanel {
         });
 
         JPanel algoPanel = new JPanel(new GridLayout(0, 2));
-
         startBFS = new JButton(" BFS");
         startBFS.addActionListener(new ActionListener() {
             @Override
@@ -74,7 +71,6 @@ public class StartStopPanel extends JPanel {
         algoPanel.add(a_star);
 
         JPanel clearPanel = new JPanel(new GridLayout(0, 2));
-
         clearObstacles = new JButton(" Clear walls");
         clearObstacles.addActionListener(new ActionListener() {
             @Override
@@ -147,7 +143,6 @@ public class StartStopPanel extends JPanel {
         else if (DFS)
             imagePanel.DFS();
     }
-
 
 }
 

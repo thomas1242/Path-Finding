@@ -7,6 +7,7 @@ public class ControlPanel extends JPanel {
     private ImagePanel imagePanel;
     private boolean BFS, DFS, Dijkstra, A_star;
     private JButton startBFS, startDFS, dijkstra, a_star;
+    private Color textColor = new Color(0xff4d4d4d);
 
     public ControlPanel(ImagePanel imagePanel) {
         setLayout(new GridLayout(0, 1));
@@ -92,6 +93,7 @@ public class ControlPanel extends JPanel {
 
         JLabel algo_label = new JLabel(" Algorithms");
         algo_label.setFont(new Font("plain", Font.BOLD, 13));
+        algo_label.setForeground( new Color(0xffFFF1A5) );
 
         startSearch.setFont(new Font("plain", Font.BOLD, 13));
         startDFS.setFont(new Font("plain", Font.BOLD, 13));
@@ -101,6 +103,14 @@ public class ControlPanel extends JPanel {
         a_star.setFont(new Font("plain", Font.BOLD, 13));
         clearObstacles.setFont(new Font("plain", Font.BOLD, 13));
         clearPath.setFont(new Font("plain", Font.BOLD, 13));
+
+        startSearch.setForeground(textColor);
+        clearObstacles.setForeground(textColor);
+        clearPath.setForeground(textColor);
+        startDFS.setForeground(textColor);
+        startBFS.setForeground(textColor);
+        dijkstra.setForeground(textColor);
+        a_star.setForeground(textColor);
 
         startDFS.setOpaque(false);
         startBFS.setOpaque(false);
@@ -129,10 +139,10 @@ public class ControlPanel extends JPanel {
         Dijkstra = false;
         A_star = false;
 
-        startBFS.setForeground(Color.BLACK);
-        startDFS.setForeground(Color.BLACK);
-        dijkstra.setForeground(Color.BLACK);
-        a_star.setForeground(Color.BLACK);
+        startBFS.setForeground(textColor);
+        startDFS.setForeground(textColor);
+        dijkstra.setForeground(textColor);
+        a_star.setForeground(textColor);
     }
 
     private void doSearch() {

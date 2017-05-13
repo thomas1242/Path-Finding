@@ -408,6 +408,7 @@ class SpeedSlider extends JPanel {
 
         label = new JLabel(" Speed");
         label.setFont(new Font("plain", Font.BOLD, 13));
+        label.setForeground( new Color(0xffFFF1A5) );
 
         slider = new JSlider(16, 256, 64);
         slider.addChangeListener(new ChangeListener() {
@@ -437,6 +438,8 @@ class SizeSlider extends JPanel {
 
         label = new JLabel();
         label.setFont(new Font("plain", Font.BOLD, 13));
+        label.setForeground( new Color(0xffFFF1A5) );
+
 
         slider = new JSlider(2, 240, 60);
         label.setText(" Rows: " + String.valueOf(imagePanel.getHeight() / slider.getValue() + 1) + " Columns: " + String.valueOf(imagePanel.getWidth() / slider.getValue() + 1));

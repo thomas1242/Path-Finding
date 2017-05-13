@@ -13,21 +13,19 @@ public class ImagePanel extends JLayeredPane {
     private BufferedImage image = null;
     private Graphics2D g2d = null;
 
-    private Node[][] grid = null;
+    private Node[][] grid  = null;
     private int cell_width = 60;
     public int frame_delay = 32;
 
     CellLoc startPoint, endPoint;
-    boolean draggingStart = false, draggingEnd = false;
-    boolean drawingWalls = false, erasingWalls = false;
+    boolean draggingStart = false, draggingEnd  = false;
+    boolean drawingWalls  = false, erasingWalls = false;
 
-    Color passable_color =  new Color(255, 255, 250, 255);
+    Color passable_color   =  new Color(255, 255, 250, 255);
     Color impassable_color =  Color.GRAY;
-    Color visited_color =  new Color(0x22A7F0);
-    Color edge_color =  new Color(0xFFFFD034);
-    Color grid_color =  new Color(0, 0, 0, 255);
-
-
+    Color visited_color    =  new Color(0x22A7F0);
+    Color edge_color       =  new Color(0xFFFFD034);
+    Color grid_color       =  new Color(0, 0, 0, 255);
 
     public ImagePanel(int width, int height) {
         setBounds(0, 0, width, height);
@@ -48,12 +46,10 @@ public class ImagePanel extends JLayeredPane {
     }
 
     public void setStartPoint(int x, int y) {
-
-        if( !isValidLoc(x, y) )
+        if( !isValidLoc(x, y) || !grid[x][y].isPassable)
             return;
 
-        if(grid[x][y].isPassable)
-            startPoint = new CellLoc(x, y, grid[x][y]);
+        startPoint = new CellLoc(x, y, grid[x][y]);
     }
 
     public void drawStartPoint() {
@@ -62,12 +58,10 @@ public class ImagePanel extends JLayeredPane {
     }
 
     public void setEndPoint(int x, int y) {
-
-        if( !isValidLoc(x, y) )
+        if( !isValidLoc(x, y) || !grid[x][y].isPassable)
             return;
 
-        if(grid[x][y].isPassable)
-            endPoint = new CellLoc(x, y, grid[x][y]);
+        endPoint = new CellLoc(x, y, grid[x][y]);
     }
 
     public void drawEndPoint() {
@@ -110,21 +104,26 @@ public class ImagePanel extends JLayeredPane {
         g2d.setColor(passable_color);
         g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
 
+        int x, y;
+
         // grid cells
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
 
+                x = i * cell_width + 1;
+                y = j * cell_width + 1;
+
                 if (!grid[i][j].isPassable) {
                     g2d.setColor(impassable_color);
-                    g2d.fillRect(i * cell_width + 1, j * cell_width + 1, cell_width - 1, cell_width - 1);
+                    g2d.fillRect(x, y, cell_width - 1, cell_width - 1);
                 } 
                 else if (grid[i][j].inQueue) {
                     g2d.setColor(edge_color);
-                    g2d.fillRect(i * cell_width + 1, j * cell_width + 1, cell_width - 1, cell_width - 1);
+                    g2d.fillRect(x, y, cell_width - 1, cell_width - 1);
                 }
                 else if (grid[i][j].isVisited) {
                     g2d.setColor(visited_color);
-                    g2d.fillRect(i * cell_width + 1, j * cell_width + 1, cell_width - 1, cell_width - 1);
+                    g2d.fillRect(x, y, cell_width - 1, cell_width - 1);
                 }
             }
         }

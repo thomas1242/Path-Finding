@@ -96,14 +96,29 @@ public class ImagePanel extends JLayeredPane {
     }
 
     public void setNeighbors() {    // O( 9*nm where n = #rows, m = #cols)
-        for (int i = 0; i < grid.length; i++) {
+        // for (int i = 0; i < grid.length; i++) {
+        //     for (int j = 0; j < grid[i].length; j++) {
+        //         for (int n = -1; n <= 1; n++) {
+        //             for (int m = -1; m <= 1; m++) {
+        //                 int x_step = i + n;
+        //                 int y_step = j + m;
+        //                 if (!(i == x_step && j == y_step) && x_step < grid.length && x_step >= 0 && y_step < grid[i].length && y_step >= 0)
+        //                     grid[i][j].neighbors.add(grid[x_step][y_step]);
+        //             }
+        //         }
+        //     }
+        // }
+
+
+         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 for (int n = -1; n <= 1; n++) {
                     for (int m = -1; m <= 1; m++) {
                         int x_step = i + n;
                         int y_step = j + m;
-                        if (!(i == x_step && j == y_step) && x_step < grid.length && x_step >= 0 && y_step < grid[i].length && y_step >= 0)
-                            grid[i][j].neighbors.add(grid[x_step][y_step]);
+                        if(m == 0 || n == 0)
+                            if (!(i == x_step && j == y_step) && x_step < grid.length && x_step >= 0 && y_step < grid[i].length && y_step >= 0)
+                                grid[i][j].neighbors.add(grid[x_step][y_step]);
                     }
                 }
             }
@@ -138,6 +153,10 @@ public class ImagePanel extends JLayeredPane {
             }
         }
 
+        drawGridLines();
+    }
+
+    private void drawGridLines() {
         // grid lines
         g2d.setStroke( new BasicStroke( 1.0f,  BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND ) );
         g2d.setColor(grid_line_color);
@@ -208,6 +227,10 @@ public class ImagePanel extends JLayeredPane {
             prev = curr;
             curr = curr.parent;
         }
+        drawLineBetweenTwoCells(prev, curr);
+        // drawGridLines();
+        repaint();
+
     }
 
     public void drawAll() {

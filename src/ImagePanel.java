@@ -22,8 +22,8 @@ public class ImagePanel extends JLayeredPane {
     private Color impassable_color =  Color.BLACK;
     private Color edge_color       =  new Color(0xffFFD700);
     private Color grid_line_color  =  new Color(0, 0, 0, 255);
-    private Color path_line_color  =  new Color(0xff9bcc5a);
-    private Color path_cell_color  =  new Color(255, 255, 240, 255);
+    private Color path_line_color  =  new Color(255, 255, 240, 255);
+    private Color path_cell_color  =  new Color(0xff9bcc5a);
 
     // Grid
     private Node[][] grid  = null;

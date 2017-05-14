@@ -4,15 +4,15 @@ Visualizing path finding algorithms
 
 ## Compilation and running
 
-
+Clone the repository
 ```javascript
-# Clone the repository
 git clone https://github.com/thomas1242/Path-Finding/
-cd Path-Finding/src 
+```
 
-# Compile and run the source code
-javac Main.java 
-java Main 
+Compile and run the source code
+```javascript 
+javac Path-Finding/src/*.java
+java -cp Path-Finding/src Main
 ```
 
 ## Usage

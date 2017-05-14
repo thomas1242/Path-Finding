@@ -24,7 +24,7 @@ java Main
 * Click start search.<br>
 
 
-![DFS and BFS](/images/DFSvsBFS.gif)
+![DFS and BFS](/images/BFS_DFS.gif)
 
 
 

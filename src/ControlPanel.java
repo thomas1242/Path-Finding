@@ -7,7 +7,7 @@ public class ControlPanel extends JPanel {
     private ImagePanel imagePanel;
     private boolean BFS, DFS, Dijkstra, A_star;
     private JButton startBFS, startDFS, dijkstra, a_star;
-    private Color textColor = new Color(0xff4d4d4d);
+    private Color textColor = new Color(50, 50, 50, 200);
 
     public ControlPanel(ImagePanel imagePanel) {
         setLayout(new GridLayout(0, 1));

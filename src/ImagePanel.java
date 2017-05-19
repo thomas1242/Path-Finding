@@ -173,7 +173,14 @@ public class ImagePanel extends JLayeredPane {
         g2d.fillRect(x, y, cell_width - 1, cell_width - 1);   
         drawStartPoint();
         drawEndPoint();  
-        repaint();         
+        repaint();      
+
+         try {
+             Thread.sleep(frame_delay);
+            } catch (InterruptedException e) {
+             e.printStackTrace();
+            }
+   
     }
 
     public void drawLineBetweenTwoCells(Node n1, Node n2) {
@@ -344,12 +351,6 @@ public class ImagePanel extends JLayeredPane {
                     if(curr.equals(endPoint))
                         break;
 
-                    try {
-                        Thread.sleep(frame_delay/curr.neighbors.size());
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
                     drawCell(x, y, visited_color);
 
 
@@ -359,11 +360,7 @@ public class ImagePanel extends JLayeredPane {
                             n.isQueued = true;
                             n.isVisited = true;
                             n.parent = curr;
-                            try {
-                                Thread.sleep(frame_delay/curr.neighbors.size());
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                           
                              drawCell(n.x, n.y, edge_color);
                             }
                     }
@@ -397,12 +394,6 @@ public class ImagePanel extends JLayeredPane {
                     final int x = curr.x;
                     final int y = curr.y;
 
-                    try {
-                        Thread.sleep(frame_delay);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
                     drawCell(x, y, visited_color);
 
                     if(curr.equals(endPoint))
@@ -414,13 +405,8 @@ public class ImagePanel extends JLayeredPane {
                             n.isQueued = true;
                             n.isVisited = true;
                             n.parent = curr;
-                            try {
-                                Thread.sleep(frame_delay/curr.neighbors.size());
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                            
                             drawCell(n.x, n.y, edge_color);
-
                         }
                     }
 
@@ -456,7 +442,7 @@ class SpeedSlider extends JPanel {
         label.setFont(new Font("plain", Font.BOLD, 13));
         label.setForeground( new Color(0xffFFF1A5) );
 
-        slider = new JSlider(1, 256, 64);
+        slider = new JSlider(0, 128, 64);
         slider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {

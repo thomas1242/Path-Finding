@@ -12,7 +12,7 @@ public class ControlPanel extends JPanel {
     public ControlPanel(ImagePanel imagePanel) {
         setLayout(new GridLayout(0, 1));
         this.imagePanel = imagePanel;
-        setBounds(900, (int)(imagePanel.getHeight() * .25), 200, (int)(imagePanel.getHeight() * .5)  );
+        setBounds((int)(imagePanel.getWidth() * (1 - .2)), (int)(imagePanel.getHeight() * .25), (int)(imagePanel.getWidth() * .175), (int)(imagePanel.getHeight() * .5)  );
 
         JButton startSearch;
         JButton clearObstacles, clearPath;

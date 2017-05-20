@@ -18,11 +18,11 @@ public class ImagePanel extends JLayeredPane {
     private Color start_color      =  Color.GREEN;
     private Color end_color        =  Color.RED;
     private Color visited_color    =  Color.LIGHT_GRAY;
-    private Color passable_color   =  Color.GRAY;
+    private Color passable_color   =  new Color(120,120,120, 255);
     private Color impassable_color =  Color.BLACK;
     private Color edge_color       =  new Color(0xffFFF1A5); // 0xffFFD700
     private Color grid_line_color  =  new Color(0, 0, 0, 255);
-    private Color path_line_color  =  new Color(255, 255, 240, 255);
+    private Color path_line_color  =  Color.BLACK;
     private Color path_cell_color  =  new Color(0xff9bcc5a);
 
     // Grid
@@ -167,12 +167,14 @@ public class ImagePanel extends JLayeredPane {
     }
 
     public void drawCell(int x, int y, Color color) {
+
+        if(startPoint.equals(grid[x][y]) || endPoint.equals(grid[x][y]))
+            return;
+
         x = x * cell_width + 1;
         y = y * cell_width + 1;
         g2d.setColor(color);
-        g2d.fillRect(x, y, cell_width - 1, cell_width - 1);   
-        drawStartPoint();
-        drawEndPoint();  
+        g2d.fillRect(x, y, cell_width - 1, cell_width - 1);    
         repaint();      
 
          try {
@@ -191,6 +193,7 @@ public class ImagePanel extends JLayeredPane {
         g2d.setStroke( new BasicStroke( 4.0f,  BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND ) );
         g2d.setColor(path_line_color);
         g2d.drawLine(x1, y1, x2, y2);
+        repaint();
     }
 
 
@@ -220,15 +223,61 @@ public class ImagePanel extends JLayeredPane {
 
         drawAll();
     }
+
+     private double[] getDeltas(int start, int end, int n)
+    {
+        double start_R, start_G, start_B,       // vars to hold the color channels
+        end_R,   end_G,   end_B,
+        delta_R, delta_G, delta_B;
+        
+        end_R = (end >> 16) & 0xFF;             // end value channels
+        end_G = (end >> 8 ) & 0xFF;
+        end_B = (end      ) & 0xFF;
+        
+        start_R = (start >> 16) & 0xFF;         // start value channels
+        start_G = (start >> 8 ) & 0xFF;
+        start_B = (start      ) & 0xFF;
+        
+        delta_R = (end_R - start_R) / n;        // change per channel
+        delta_G = (end_G - start_G) / n;
+        delta_B = (end_B - start_B) / n;
+        
+        double[] deltas = { delta_R, delta_G, delta_B };    // store change per channel into 1D array
+        return deltas;                                      // return change per channel to interpolating function
+    }
     
     public void drawPath(Node curr) {
+        int[] colorArray = new int[getPathLength(curr) - 1];
+        int start =   (255 << 24) | (0 << 16) | (255 << 8);     // start color
+        int end =   (255 << 24) | (255 << 16) | (0 << 8);     // end color
+        
+        int intARGB;                                                  // integer to hold synthesized color values
+        int value = start;                                            // start value's channels:
+        double value_R = (value >> 16) & 0xFF;
+        double value_G = (value >> 8 ) & 0xFF;
+        double value_B = (value      ) & 0xFF;
+        
+        double[] deltas = getDeltas( start, end, colorArray.length - 1 );  // compute the change per step for each channel
+        colorArray[0] = start;
+        colorArray[colorArray.length - 1] = end;
+        
+        // fill with interpolated Colors
+        for (int i = 1; i < colorArray.length - 1; i++) {         // synthesize interpolated color values and put in color arr
+            value_R += deltas[0];
+            value_G += deltas[1];
+            value_B += deltas[2];
+            
+            intARGB = (0xFF000000) | ((int)value_R << 16) | ((int)value_G << 8) | (int)value_B;
+            colorArray[i] = intARGB;
+        }
+        int n = colorArray.length;
+
         Node prev = curr;
         curr = curr.parent;
         while(curr.parent != null) {
-            drawCell(curr.x, curr.y, path_cell_color);
-            if(prev != null)
-                drawLineBetweenTwoCells(prev, curr);
-            repaint();
+            drawCell(curr.x, curr.y, new Color(colorArray[--n]));
+            drawLineBetweenTwoCells(prev, curr);
+
             try {
                 Thread.sleep((int)(frame_delay * 1.5));
             } catch (InterruptedException e) {
@@ -238,9 +287,15 @@ public class ImagePanel extends JLayeredPane {
             curr = curr.parent;
         }
         drawLineBetweenTwoCells(prev, curr);
-        // drawGridLines();
-        repaint();
+    }
 
+    public int getPathLength(Node node) {
+        int n = 0;
+        while(node != null) {
+            n++;
+            node = node.parent;
+        }
+        return n;
     }
 
     public void drawAll() {
@@ -345,13 +400,10 @@ public class ImagePanel extends JLayeredPane {
                     curr.isVisited = true;
                     curr.isQueued = false;
 
-                    final int x = curr.x;
-                    final int y = curr.y;
-
                     if(curr.equals(endPoint))
                         break;
 
-                    drawCell(x, y, visited_color);
+                    drawCell(curr.x, curr.y, visited_color);
 
 
                     for (Node n : curr.neighbors) {
@@ -391,10 +443,7 @@ public class ImagePanel extends JLayeredPane {
                     curr.isVisited = true;
                     curr.isQueued = false;
 
-                    final int x = curr.x;
-                    final int y = curr.y;
-
-                    drawCell(x, y, visited_color);
+                    drawCell(curr.x, curr.y, visited_color);
 
                     if(curr.equals(endPoint))
                         break;
@@ -405,7 +454,7 @@ public class ImagePanel extends JLayeredPane {
                             n.isQueued = true;
                             n.isVisited = true;
                             n.parent = curr;
-                            
+            
                             drawCell(n.x, n.y, edge_color);
                         }
                     }
@@ -473,7 +522,7 @@ class SizeSlider extends JPanel {
         label.setForeground( new Color(0xffFFF1A5) );
 
 
-        slider = new JSlider(2, 240, 60);
+        slider = new JSlider(2, 180, 60);
         label.setText(" Rows: " + String.valueOf(imagePanel.getHeight() / slider.getValue() + 1) + " Columns: " + String.valueOf(imagePanel.getWidth() / slider.getValue() + 1));
 
         slider.addChangeListener(new ChangeListener() {
@@ -484,6 +533,11 @@ class SizeSlider extends JPanel {
                 imagePanel.updateCellSize( size );
             }
         });;
+
+
+      slider.setForeground(Color.red);
+      slider.setBackground(new Color(50, 50, 50, 200));
+      slider.setOpaque(true);
 
         add(label, BorderLayout.CENTER);
         add(slider, BorderLayout.SOUTH);

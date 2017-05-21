@@ -33,6 +33,8 @@ public class ImagePanel extends JLayeredPane {
     private boolean draggingStart = false, draggingEnd  = false;
     private boolean drawingWalls  = false, erasingWalls = false;
 
+    private ControlPanel controlPanel;
+    private boolean isRunning = false;
 
     public ImagePanel(int width, int height) {
         setBounds(0, 0, width, height);
@@ -83,7 +85,8 @@ public class ImagePanel extends JLayeredPane {
     }
 
     public void addComponents() {
-        add(new ControlPanel(this), new Integer(3));
+        controlPanel = new ControlPanel(this);
+        add(controlPanel, new Integer(3));
     }
 
     public void createGrid() {
@@ -182,7 +185,6 @@ public class ImagePanel extends JLayeredPane {
             } catch (InterruptedException e) {
              e.printStackTrace();
             }
-   
     }
 
     public void drawLineBetweenTwoCells(Node n1, Node n2) {
@@ -227,15 +229,15 @@ public class ImagePanel extends JLayeredPane {
 
      private double[] getDeltas(int start, int end, int n)
     {
-        double start_R, start_G, start_B,       // vars to hold the color channels
+        double start_R, start_G, start_B,       
         end_R,   end_G,   end_B,
         delta_R, delta_G, delta_B;
         
-        end_R = (end >> 16) & 0xFF;             // end value channels
+        end_R = (end >> 16) & 0xFF;             
         end_G = (end >> 8 ) & 0xFF;
         end_B = (end      ) & 0xFF;
         
-        start_R = (start >> 16) & 0xFF;         // start value channels
+        start_R = (start >> 16) & 0xFF;         
         start_G = (start >> 8 ) & 0xFF;
         start_B = (start      ) & 0xFF;
         
@@ -243,27 +245,27 @@ public class ImagePanel extends JLayeredPane {
         delta_G = (end_G - start_G) / n;
         delta_B = (end_B - start_B) / n;
         
-        double[] deltas = { delta_R, delta_G, delta_B };    // store change per channel into 1D array
-        return deltas;                                      // return change per channel to interpolating function
+        double[] deltas = { delta_R, delta_G, delta_B };    
+        return deltas;                                      
     }
     
     public void drawPath(Node curr) {
         int[] colorArray = new int[getPathLength(curr) - 1];
         int start =   (255 << 24) | (0 << 16) | (255 << 8);     // start color
-        int end =   (255 << 24) | (255 << 16) | (0 << 8);     // end color
+        int end =   (255 << 24) | (255 << 16) | (0 << 8);       // end color
         
         int intARGB;                                                  // integer to hold synthesized color values
-        int value = start;                                            // start value's channels:
+        int value = start;                                            
         double value_R = (value >> 16) & 0xFF;
         double value_G = (value >> 8 ) & 0xFF;
         double value_B = (value      ) & 0xFF;
         
-        double[] deltas = getDeltas( start, end, colorArray.length - 1 );  // compute the change per step for each channel
+        double[] deltas = getDeltas( start, end, colorArray.length - 1 );  // compute change per step for each channel
         colorArray[0] = start;
         colorArray[colorArray.length - 1] = end;
         
         // fill with interpolated Colors
-        for (int i = 1; i < colorArray.length - 1; i++) {         // synthesize interpolated color values and put in color arr
+        for (int i = 1; i < colorArray.length - 1; i++) {         // synthesize interpolated color 
             value_R += deltas[0];
             value_G += deltas[1];
             value_B += deltas[2];
@@ -276,6 +278,7 @@ public class ImagePanel extends JLayeredPane {
         Node prev = curr;
         curr = curr.parent;
         while(curr.parent != null) {
+            while(paused()) {}
             drawCell(curr.x, curr.y, new Color(colorArray[--n]));
             drawLineBetweenTwoCells(prev, curr);
 
@@ -288,6 +291,8 @@ public class ImagePanel extends JLayeredPane {
             curr = curr.parent;
         }
         drawLineBetweenTwoCells(prev, curr);
+        controlPanel.setSearchText(" Start search");
+        isRunning = false;
     }
 
     public int getPathLength(Node node) {
@@ -380,7 +385,16 @@ public class ImagePanel extends JLayeredPane {
 
             public void mouseMoved(MouseEvent event) {}
         });
+    }
 
+    public boolean paused() {
+        if( isRunning )
+            return false;
+        try {
+            Thread.sleep(25);
+        }
+        catch(InterruptedException e) {}
+        return isRunning == false;
     }
 
 
@@ -396,6 +410,7 @@ public class ImagePanel extends JLayeredPane {
                 Node curr = null;
 
                 while( !q.isEmpty() ) {
+                    while( paused() ) {}
 
                     curr = q.poll();
                     curr.isVisited = true;
@@ -406,7 +421,6 @@ public class ImagePanel extends JLayeredPane {
 
                     drawCell(curr.x, curr.y, visited_color);
 
-
                     for (Node n : curr.neighbors) {
                         if(!n.isVisited && n.isPassable) {
                             q.add(n);
@@ -415,15 +429,13 @@ public class ImagePanel extends JLayeredPane {
                             n.parent = curr;
                            
                              drawCell(n.x, n.y, edge_color);
-                            }
+                        }
                     }
-
                 }
 
                 drawPath(curr);
             }
         }).start();
-
     }
 
 
@@ -439,6 +451,7 @@ public class ImagePanel extends JLayeredPane {
                 Node curr = null;
 
                 while( !stack.isEmpty() ) {
+                    while( paused() ) {}
 
                     curr = stack.pop();
                     curr.isVisited = true;
@@ -459,14 +472,15 @@ public class ImagePanel extends JLayeredPane {
                             drawCell(n.x, n.y, edge_color);
                         }
                     }
-
                 }
 
                 drawPath(curr);
-
             }
         }).start();
+    }
 
+    public void setSearchState(boolean isRunning) {
+        this.isRunning = isRunning;
     }
 
     public void setFrameDelay(int delay) { // (1000 / delay) = nodes visited per second
@@ -540,11 +554,11 @@ class SizeSlider extends JPanel {
       slider.setBackground(new Color(50, 50, 50, 200));
       slider.setOpaque(true);
 
-        add(label, BorderLayout.CENTER);
-        add(slider, BorderLayout.SOUTH);
+      add(label, BorderLayout.CENTER);
+      add(slider, BorderLayout.SOUTH);
 
-        setOpaque(false );
-        setVisible(true);
+      setOpaque(false );
+      setVisible(true);
     }
 }
 

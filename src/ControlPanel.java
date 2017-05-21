@@ -8,20 +8,33 @@ public class ControlPanel extends JPanel {
     private boolean BFS, DFS, Dijkstra, A_star;
     private JButton startBFS, startDFS, dijkstra, a_star;
     private Color textColor = new Color(50, 50, 50, 200);
+    private JButton startSearch;
+
 
     public ControlPanel(ImagePanel imagePanel) {
         setLayout(new GridLayout(0, 1));
         this.imagePanel = imagePanel;
         setBounds((int)(imagePanel.getWidth() * (1 - .2)), (int)(imagePanel.getHeight() * .25), (int)(imagePanel.getWidth() * .175), (int)(imagePanel.getHeight() * .5)  );
 
-        JButton startSearch;
         JButton clearObstacles, clearPath;
 
         startSearch = new JButton(" Start search");
         startSearch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                doSearch();
+                if(startSearch.getText().equals(" Start search")) {
+                    doSearch();
+                    startSearch.setText( " Pause");
+                    imagePanel.setSearchState(true);
+                }
+                else if (startSearch.getText().equals( " Pause")) {
+                    startSearch.setText( " Resume");
+                    imagePanel.setSearchState(false);
+                }
+                else if (startSearch.getText().equals( " Resume")) {
+                    startSearch.setText( " Pause");
+                    imagePanel.setSearchState(true);
+                }
             }
         });
 
@@ -145,13 +158,19 @@ public class ControlPanel extends JPanel {
         a_star.setForeground(textColor);
     }
 
+    public void setSearchText(String s) {
+        startSearch.setText(s);
+    }
+
     private void doSearch() {
         imagePanel.clearPath();
+        imagePanel.setSearchState(true);
 
         if(BFS)
             imagePanel.BFS();
         else if (DFS)
             imagePanel.DFS();
+
     }
 
 }

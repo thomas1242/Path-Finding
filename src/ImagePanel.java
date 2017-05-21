@@ -190,7 +190,8 @@ public class ImagePanel extends JLayeredPane {
         int y1 = n1.y * cell_width + cell_width / 2 + 1;
         int x2 = n2.x * cell_width + cell_width / 2 + 1;
         int y2 = n2.y * cell_width + cell_width / 2 + 1;
-        g2d.setStroke( new BasicStroke( 4.0f,  BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND ) );
+
+        g2d.setStroke( new BasicStroke( (float)(cell_width * .1),  BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND ) );
         g2d.setColor(path_line_color);
         g2d.drawLine(x1, y1, x2, y2);
         repaint();

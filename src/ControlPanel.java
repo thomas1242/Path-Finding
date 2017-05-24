@@ -7,7 +7,7 @@ public class ControlPanel extends JPanel {
     private ImagePanel imagePanel;
     private boolean BFS, DFS, Dijkstra, A_star;
     private JButton startBFS, startDFS, dijkstra, a_star;
-    private Color textColor = new Color(50, 50, 50, 200);
+    private Color textColor = new Color(30, 30, 30, 250);
     private JButton startSearch;
 
 
@@ -105,8 +105,8 @@ public class ControlPanel extends JPanel {
         clearPanel.add(clearPath);
 
         JLabel algo_label = new JLabel(" Algorithms");
-        algo_label.setFont(new Font("plain", Font.BOLD, 13));
-        algo_label.setForeground( new Color(0xffFFF1A5) );
+        algo_label.setFont(new Font("plain", Font.BOLD, 14));
+        algo_label.setForeground( textColor );
 
         startSearch.setFont(new Font("plain", Font.BOLD, 13));
         startDFS.setFont(new Font("plain", Font.BOLD, 13));
@@ -141,7 +141,8 @@ public class ControlPanel extends JPanel {
         add(clearPanel);
 
         setBackground(new Color(50, 50, 50, 200));
-        // this.setBorder(BorderFactory.createLineBorder(new Color(0xffFFF1A5), 2));
+        setBackground(new Color(0xFF, 0xD7, 0x00, 128));
+        this.setBorder(BorderFactory.createLineBorder(new Color(30, 30, 30, 220), 3));
         setVisible(true);
         setOpaque(true);
     }

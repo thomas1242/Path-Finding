@@ -548,8 +548,8 @@ class SpeedSlider extends JPanel {
         this.imagePanel = imagePanel;
 
         label = new JLabel(" Speed");
-        label.setFont(new Font("plain", Font.BOLD, 13));
-        label.setForeground( new Color(0xffFFF1A5) );
+        label.setFont(new Font("plain", Font.BOLD, 14));
+        label.setForeground( new Color(30, 30, 30, 250) );
 
         slider = new JSlider(0, 128, 64);
         slider.addChangeListener(new ChangeListener() {
@@ -578,8 +578,8 @@ class SizeSlider extends JPanel {
         this.imagePanel = imagePanel;
 
         label = new JLabel();
-        label.setFont(new Font("plain", Font.BOLD, 13));
-        label.setForeground( new Color(0xffFFF1A5) );
+        label.setFont(new Font("plain", Font.BOLD, 14));
+        label.setForeground( new Color(30, 30, 30, 255) );
 
 
         slider = new JSlider(2, 180, 60);
@@ -593,11 +593,6 @@ class SizeSlider extends JPanel {
                 imagePanel.updateCellSize( size );
             }
         });;
-
-
-      slider.setForeground(Color.red);
-      slider.setBackground(new Color(50, 50, 50, 200));
-      slider.setOpaque(true);
 
       add(label, BorderLayout.CENTER);
       add(slider, BorderLayout.SOUTH);

@@ -36,6 +36,10 @@ public class ImagePanel extends JLayeredPane {
     private ControlPanel controlPanel;
     private boolean isRunning = false;
 
+    //
+
+    Color[] cellColors;
+
     public ImagePanel(int width, int height) {
         setBounds(0, 0, width, height);
         image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -96,7 +100,9 @@ public class ImagePanel extends JLayeredPane {
         for (int i = 0; i < grid.length; i++)
             for (int j = 0; j < grid[i].length; j++)
                 grid[i][j] = new Node(i, j);
-    }
+
+        generateCellColors();
+        }
 
     public void setNeighbors() {    // O( 9*nm where n = #rows, m = #cols)
         // for (int i = 0; i < grid.length; i++) {
@@ -248,6 +254,36 @@ public class ImagePanel extends JLayeredPane {
         double[] deltas = { delta_R, delta_G, delta_B };    
         return deltas;                                      
     }
+
+    private void generateCellColors() {
+
+        // cellColors = new Color[ (int)Math.sqrt( Math.pow(grid.length, 2) + Math.pow(grid[0].length, 2) ) ];
+        cellColors = new Color[ grid.length * grid[0].length ];
+
+
+        int start =   0xffcccccc;     // start color
+        int end =   0x0fFFD700;       // end color
+        
+        int intARGB;                                                  // integer to hold synthesized color values
+        int value = start;                                            
+        double value_R = (value >> 16) & 0xFF;
+        double value_G = (value >> 8 ) & 0xFF;
+        double value_B = (value      ) & 0xFF;
+        
+        double[] deltas = getDeltas( start, end, cellColors.length - 1 );  // compute change per step for each channel
+        cellColors[0] = new Color(start);
+        cellColors[cellColors.length - 1] = new Color(end);
+        
+        // fill with interpolated Colors
+        for (int i = 1; i < cellColors.length - 1; i++) {         // synthesize interpolated color 
+            value_R += deltas[0];
+            value_G += deltas[1];
+            value_B += deltas[2];
+            
+            intARGB = (0xFF000000) | ((int)value_R << 16) | ((int)value_G << 8) | (int)value_B;
+            cellColors[i] = new Color(intARGB);
+        }
+    }
     
     public void drawPath(Node curr) {
         int[] colorArray = new int[getPathLength(curr) - 1];
@@ -397,12 +433,17 @@ public class ImagePanel extends JLayeredPane {
         return isRunning == false;
     }
 
+    public int getStartNodeDistance(Node n) {
+        return (int)Math.sqrt( Math.pow(startPoint.x - n.x, 2) + Math.pow(startPoint.y - n.y, 2) );
+    }
+
 
     public void BFS() {
 
         new Thread(new Runnable() {
             @Override
             public void run() {
+                int d = 0;
 
                 LinkedList<Node> q = new LinkedList<Node>();
                 q.add( startPoint );
@@ -419,7 +460,9 @@ public class ImagePanel extends JLayeredPane {
                     if(curr.equals(endPoint))
                         break;
 
-                    drawCell(curr.x, curr.y, visited_color);
+
+
+                    drawCell(curr.x, curr.y, cellColors[d++ ]);//vis
 
                     for (Node n : curr.neighbors) {
                         if(!n.isVisited && n.isPassable) {
@@ -439,11 +482,13 @@ public class ImagePanel extends JLayeredPane {
     }
 
 
+
     public void DFS() {
 
         new Thread(new Runnable() {
             @Override
             public void run() {
+                int d = 0;
 
                 Stack<Node> stack = new Stack<Node>();
                 stack.push( startPoint );
@@ -457,7 +502,7 @@ public class ImagePanel extends JLayeredPane {
                     curr.isVisited = true;
                     curr.isQueued = false;
 
-                    drawCell(curr.x, curr.y, visited_color);
+                    drawCell(curr.x, curr.y, cellColors[d++]);
 
                     if(curr.equals(endPoint))
                         break;

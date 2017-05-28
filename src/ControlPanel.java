@@ -8,8 +8,8 @@ public class ControlPanel extends JPanel {
     private boolean BFS, DFS, Dijkstra, A_star;
     private JButton startBFS, startDFS, dijkstra, a_star;
     private Color textColor = new Color(30, 30, 30, 250);
-    private JButton startSearch;
-
+    private JButton startSearch;   
+    private JButton createMaze;
 
     public ControlPanel(ImagePanel imagePanel) {
         setLayout(new GridLayout(0, 1));
@@ -19,22 +19,34 @@ public class ControlPanel extends JPanel {
         JButton clearObstacles, clearPath;
 
         startSearch = new JButton(" Start search");
+        startSearch.setForeground(  new Color(0, 175, 0, 255)  );
         startSearch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(startSearch.getText().equals(" Start search")) {
                     doSearch();
                     startSearch.setText( " Pause");
+                    startSearch.setForeground(  Color.RED  );
                     imagePanel.setSearchState(true);
                 }
                 else if (startSearch.getText().equals( " Pause")) {
                     startSearch.setText( " Resume");
+                    startSearch.setForeground(  new Color(0, 175, 0, 255)  );
                     imagePanel.setSearchState(false);
                 }
                 else if (startSearch.getText().equals( " Resume")) {
                     startSearch.setText( " Pause");
+                    startSearch.setForeground(  Color.RED  );
                     imagePanel.setSearchState(true);
                 }
+            }
+        });
+
+        createMaze = new JButton("Generate Maze");
+        createMaze.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                imagePanel.createMaze();
             }
         });
 
@@ -116,10 +128,12 @@ public class ControlPanel extends JPanel {
         a_star.setFont(new Font("plain", Font.BOLD, 13));
         clearObstacles.setFont(new Font("plain", Font.BOLD, 13));
         clearPath.setFont(new Font("plain", Font.BOLD, 13));
+        createMaze.setFont(new Font("plain", Font.BOLD, 13));
 
         startSearch.setForeground(textColor);
         clearObstacles.setForeground(textColor);
         clearPath.setForeground(textColor);
+        createMaze.setForeground(textColor);
         startDFS.setForeground(textColor);
         startBFS.setForeground(textColor);
         dijkstra.setForeground(textColor);
@@ -139,10 +153,11 @@ public class ControlPanel extends JPanel {
         add(new SpeedSlider(imagePanel));
         add(new SizeSlider(imagePanel));
         add(clearPanel);
+        add(createMaze);
 
         setBackground(new Color(50, 50, 50, 200));
-        setBackground(new Color(0xFF, 0xD7, 0x00, 128));
-        this.setBorder(BorderFactory.createLineBorder(new Color(30, 30, 30, 220), 3));
+        setBackground(new Color(0xFF, 0xD7, 0x00, 120));
+        // this.setBorder(BorderFactory.createLineBorder(new Color(30, 30, 30, 220), 3));
         setVisible(true);
         setOpaque(true);
     }
@@ -163,6 +178,11 @@ public class ControlPanel extends JPanel {
         startSearch.setText(s);
     }
 
+    public void setSearchText(String s, Color c) {
+        startSearch.setText(s);
+        startSearch.setForeground(c);
+    }
+
     private void doSearch() {
         imagePanel.clearPath();
         imagePanel.setSearchState(true);
@@ -171,7 +191,6 @@ public class ControlPanel extends JPanel {
             imagePanel.BFS();
         else if (DFS)
             imagePanel.DFS();
-
     }
 
 }

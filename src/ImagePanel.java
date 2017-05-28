@@ -5,7 +5,7 @@ import java.awt.event.*;
 
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
-import java.util.Stack;
+import java.util.*;
 
 
 public class ImagePanel extends JLayeredPane {
@@ -32,13 +32,10 @@ public class ImagePanel extends JLayeredPane {
     private int frame_delay = 32;
     private boolean draggingStart = false, draggingEnd  = false;
     private boolean drawingWalls  = false, erasingWalls = false;
+    private Color[] cellColors;
 
     private ControlPanel controlPanel;
     private boolean isRunning = false;
-
-    //
-
-    Color[] cellColors;
 
     public ImagePanel(int width, int height) {
         setBounds(0, 0, width, height);
@@ -118,7 +115,6 @@ public class ImagePanel extends JLayeredPane {
         //     }
         // }
 
-
          for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 for (int n = -1; n <= 1; n++) {
@@ -175,7 +171,7 @@ public class ImagePanel extends JLayeredPane {
             g2d.drawLine(i, 0, i, image.getHeight() );
     }
 
-    public void drawCell(int x, int y, Color color) {
+    public void drawCell(int x, int y, Color color, int delay) {
 
         if(startPoint.equals(grid[x][y]) || endPoint.equals(grid[x][y]))
             return;
@@ -184,10 +180,10 @@ public class ImagePanel extends JLayeredPane {
         y = y * cell_width + 1;
         g2d.setColor(color);
         g2d.fillRect(x, y, cell_width - 1, cell_width - 1);    
-        repaint();      
+        repaint();
 
          try {
-             Thread.sleep(frame_delay);
+             Thread.sleep(delay);
             } catch (InterruptedException e) {
              e.printStackTrace();
             }
@@ -315,7 +311,7 @@ public class ImagePanel extends JLayeredPane {
         curr = curr.parent;
         while(curr.parent != null) {
             while(paused()) {}
-            drawCell(curr.x, curr.y, new Color(colorArray[--n]));
+            drawCell(curr.x, curr.y, new Color(colorArray[--n]), frame_delay);
             drawLineBetweenTwoCells(prev, curr);
 
             try {
@@ -327,7 +323,7 @@ public class ImagePanel extends JLayeredPane {
             curr = curr.parent;
         }
         drawLineBetweenTwoCells(prev, curr);
-        controlPanel.setSearchText(" Start search");
+        controlPanel.setSearchText(" Start search", new Color(0, 175, 0, 255) );
         isRunning = false;
     }
 
@@ -437,6 +433,19 @@ public class ImagePanel extends JLayeredPane {
         return (int)Math.sqrt( Math.pow(startPoint.x - n.x, 2) + Math.pow(startPoint.y - n.y, 2) );
     }
 
+    public void A_Star() {
+
+        LinkedList<Node> openSet = new LinkedList<Node>();
+        LinkedList<Node> closedSet = new LinkedList<Node>();
+
+        openSet.add( startPoint );
+
+        Node curr = null;
+
+        while( !openSet.isEmpty() ) {
+            // TODO
+        }
+    }
 
     public void BFS() {
 
@@ -460,9 +469,7 @@ public class ImagePanel extends JLayeredPane {
                     if(curr.equals(endPoint))
                         break;
 
-
-
-                    drawCell(curr.x, curr.y, cellColors[d++ ]);//vis
+                    drawCell(curr.x, curr.y, cellColors[d++ ], frame_delay);//vis
 
                     for (Node n : curr.neighbors) {
                         if(!n.isVisited && n.isPassable) {
@@ -471,7 +478,7 @@ public class ImagePanel extends JLayeredPane {
                             n.isVisited = true;
                             n.parent = curr;
                            
-                             drawCell(n.x, n.y, edge_color);
+                             drawCell(n.x, n.y, edge_color, frame_delay);
                         }
                     }
                 }
@@ -480,7 +487,6 @@ public class ImagePanel extends JLayeredPane {
             }
         }).start();
     }
-
 
 
     public void DFS() {
@@ -502,7 +508,7 @@ public class ImagePanel extends JLayeredPane {
                     curr.isVisited = true;
                     curr.isQueued = false;
 
-                    drawCell(curr.x, curr.y, cellColors[d++]);
+                    drawCell(curr.x, curr.y, cellColors[d++], frame_delay);
 
                     if(curr.equals(endPoint))
                         break;
@@ -514,7 +520,7 @@ public class ImagePanel extends JLayeredPane {
                             n.isVisited = true;
                             n.parent = curr;
             
-                            drawCell(n.x, n.y, edge_color);
+                            drawCell(n.x, n.y, edge_color, frame_delay);
                         }
                     }
                 }
@@ -522,6 +528,67 @@ public class ImagePanel extends JLayeredPane {
                 drawPath(curr);
             }
         }).start();
+    }
+
+    public void createMaze() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                                for (int i = 0; i < grid.length; i++ ) {
+                                    for (int j = 0; j < grid[0].length; j++ ) {
+                                        if( grid[i][j].equals(startPoint) || grid[i][j].equals(endPoint))
+                                            continue;
+                                        grid[i][j].isPassable = false;
+                                        grid[i][j].isVisited = false;
+                                        drawCell(grid[i][j].x, grid[i][j].y, impassable_color, 0);
+                                    }
+                                }
+                                repaint();
+
+                                boolean[][] vis = new boolean[grid.length][grid[0].length];
+
+                                Stack<Node> stack = new Stack<Node>();
+                                Node center = grid[grid.length/2][grid[0].length/2];
+                                Node curr = center;
+
+                                Random rand = new Random();
+                                int rand_neighbor;
+
+                                stack.add(center);
+
+                                while( !stack.isEmpty() ) {
+
+                                    boolean flag = false;
+                                    rand_neighbor = rand.nextInt(curr.neighbors.size());
+                                    Node prev = curr;
+                                
+                                    for(int z = 0; z < curr.neighbors.size(); z++) {
+
+                                        int v = (z + rand_neighbor) % curr.neighbors.size();
+
+                                            Node n = curr.neighbors.get(v);
+                                            if(flag)
+                                                vis[n.x][n.y] = true;
+                                            else if(!vis[n.x][n.y] ) {
+                                                stack.push(curr);
+                                                vis[curr.x][curr.y] = true;
+                                                prev = curr;
+                                                curr = n;
+                                                vis[curr.x][curr.y] = true;
+                                                flag = true;
+                                            }
+                                            curr.isPassable = true;
+                                            drawCell(prev.x, prev.y, edge_color, 0);
+                                            drawCell(curr.x, curr.y, passable_color, frame_delay);
+                                    }
+                                    if( !flag ) {
+                                        curr = stack.pop();
+                                    }
+                                }
+                            }
+                  }).start();
     }
 
     public void setSearchState(boolean isRunning) {
@@ -589,7 +656,7 @@ class SizeSlider extends JPanel {
             @Override
             public void stateChanged(ChangeEvent e) {
                 int size = slider.getValue();
-                label.setText(" Rows: " + String.valueOf(imagePanel.getHeight() / size + 1) + " Columns: " + String.valueOf(imagePanel.getWidth() / size + 1));
+                label.setText(" " + String.valueOf(imagePanel.getHeight() / size + 1) + " rows , " + String.valueOf(imagePanel.getWidth() / size + 1)  + " columns ");
                 imagePanel.updateCellSize( size );
             }
         });;

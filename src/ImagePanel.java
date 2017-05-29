@@ -658,7 +658,7 @@ class SizeSlider extends JPanel {
 
 
         slider = new JSlider(2, 180, 60);
-        label.setText(" Rows: " + String.valueOf(imagePanel.getHeight() / slider.getValue() + 1) + " Columns: " + String.valueOf(imagePanel.getWidth() / slider.getValue() + 1));
+        label.setText(" " + String.valueOf(imagePanel.getHeight() / slider.getValue() + 1) + " rows , " + String.valueOf(imagePanel.getWidth() / slider.getValue() + 1)  + " columns ");
 
         slider.addChangeListener(new ChangeListener() {
             @Override

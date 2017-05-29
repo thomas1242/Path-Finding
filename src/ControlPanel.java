@@ -5,24 +5,20 @@ import java.awt.event.*;
 public class ControlPanel extends JPanel {
 
     private ImagePanel imagePanel;
-    private int x, y, width, height;
+    private JButton startSearch;  
     private boolean BFS, DFS, Dijkstra, A_star;
     private JButton startBFS, startDFS, dijkstra, a_star;
     private Color textColor = new Color(0, 0, 0, 250);
-    private JButton startSearch;   
-    private JButton createMaze;
-    private int curr_x, curr_y;
+    private int x, y, curr_x, curr_y, width, height; 
 
     public ControlPanel(ImagePanel imagePanel) {
         setLayout(new GridLayout(0, 1));
         this.imagePanel = imagePanel;
-        x = (int)(imagePanel.getWidth() * (1 - .2));
-        y = (int)(imagePanel.getHeight() * .25);
+        x = curr_x = (int)(imagePanel.getWidth() * (1 - .2));
+        y = curr_y = (int)(imagePanel.getHeight() * .25);
         width = (int)(imagePanel.getWidth() * .175);
         height = (int)(imagePanel.getHeight() * .5);
         setBounds(x, y, width, height  );
-        curr_x = x;
-        curr_y = y;
 
         JButton clearObstacles, clearPath;
 
@@ -50,7 +46,7 @@ public class ControlPanel extends JPanel {
             }
         });
 
-        createMaze = new JButton("Generate Maze");
+        JButton createMaze = new JButton("Generate Maze");
         createMaze.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -166,7 +162,7 @@ public class ControlPanel extends JPanel {
         setBackground(new Color(50, 50, 50, 200));
         setBackground(new Color(0xFF, 0xD7, 0x00, 120));
         setBackground(new Color(50, 50, 50, 200));
-        // this.setBorder(BorderFactory.createLineBorder(new Color(30, 30, 30, 220), 3));
+        this.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220,  32), 6));
         setVisible(true);
         setOpaque(true);
 

@@ -37,7 +37,7 @@ public class ControlPanel extends JPanel {
             }
         });
 
-        JButton createMaze = new JButton("Generate Maze");
+        JButton createMaze = new JButton("Create Maze");
         createMaze.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -147,36 +147,22 @@ public class ControlPanel extends JPanel {
         setVisible(true);
         setOpaque(true);
 
-        addMouseListener( new MouseAdapter()
-        {
-                public void mousePressed( MouseEvent event )
-                {
-                    if(event.getButton() == MouseEvent.BUTTON1)
-                    {
+        addMouseListener( new MouseAdapter() {
+                public void mousePressed( MouseEvent event ) {
+                    if(event.getButton() == MouseEvent.BUTTON1) {
                         x = (int)event.getPoint().getX();
                         y = (int)event.getPoint().getY();
                     }
-                    else if(event.getButton() == MouseEvent.BUTTON2)
-                    {}
-                    else if(event.getButton() == MouseEvent.BUTTON3)
-                    {}
                 }
             } );
 
-       addMouseMotionListener( new MouseMotionAdapter()
-       {
-                public void mouseDragged(MouseEvent event)
-                {
+       addMouseMotionListener( new MouseMotionAdapter() {
+                public void mouseDragged(MouseEvent event) {
                     Point p = event.getPoint();
                     curr_x += (p.getX() - x);
                     curr_y += (p.getY() - y);
                     setBounds(curr_x, curr_y, width, height);
                 }
-            } );
-            addMouseListener( new MouseAdapter()
-                             {
-                public void mouseReleased(MouseEvent event)
-                {}
             } );
     }
 
@@ -202,26 +188,26 @@ public class ControlPanel extends JPanel {
     }
 
     public void runSearch() {
-            doSearch();
-            startSearch.setText( " Pause");
-            startSearch.setForeground(  Color.RED  );
-            imagePanel.setSearchState(true);
+        startSearch.setText( " Pause");
+        startSearch.setForeground(  Color.RED  );
+        imagePanel.setSearchState(true);
+        doSearch();
     }
 
     public void pauseSearch() {
-            startSearch.setText( " Resume");
-            startSearch.setForeground(  new Color(0, 175, 0, 255)  );
-            imagePanel.setSearchState(false);
+        startSearch.setText( " Resume");
+        startSearch.setForeground(  new Color(0, 175, 0, 255)  );
+        imagePanel.setSearchState(false);
     }
 
     public void resumeSearch() {
-            startSearch.setText( " Pause");
-            startSearch.setForeground(  Color.RED  );
-            imagePanel.setSearchState(true);
+        startSearch.setText( " Pause");
+        startSearch.setForeground(  Color.RED  );
+        imagePanel.setSearchState(true);
     }
 
     public void readySearch() {
-        setSearchText(" Start search", new Color(0, 175, 0, 255) );
+        setSearchText(" Start search", textColor );
     }
 
     private void doSearch() {

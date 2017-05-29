@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.*;
 
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
 import java.util.*;
 
 
@@ -50,7 +49,6 @@ public class ImagePanel extends JLayeredPane {
 
         drawAll();
     }
-
 
     public void drawStartPoint() {
         g2d.setColor(start_color);
@@ -136,7 +134,6 @@ public class ImagePanel extends JLayeredPane {
 
         int x, y;
 
-        // grid cells
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
 
@@ -232,8 +229,8 @@ public class ImagePanel extends JLayeredPane {
      private double[] getDeltas(int start, int end, int n)
     {
         double start_R, start_G, start_B,       
-        end_R,   end_G,   end_B,
-        delta_R, delta_G, delta_B;
+                 end_R,   end_G,   end_B,
+               delta_R, delta_G, delta_B;
         
         end_R = (end >> 16) & 0xFF;             
         end_G = (end >> 8 ) & 0xFF;
@@ -243,7 +240,7 @@ public class ImagePanel extends JLayeredPane {
         start_G = (start >> 8 ) & 0xFF;
         start_B = (start      ) & 0xFF;
         
-        delta_R = (end_R - start_R) / n;        // change per channel
+        delta_R = (end_R - start_R) / n;        // change per color channel
         delta_G = (end_G - start_G) / n;
         delta_B = (end_B - start_B) / n;
         
@@ -256,13 +253,8 @@ public class ImagePanel extends JLayeredPane {
         // cellColors = new Color[ (int)Math.sqrt( Math.pow(grid.length, 2) + Math.pow(grid[0].length, 2) ) ];
         cellColors = new Color[ grid.length * grid[0].length ];
 
-
         int start =   0xffcccccc;     // start color
         int end =   0x0fFFD700;       // end color
-
-        // int temp = start;
-        // start = end;
-        // end = temp;
         
         int intARGB;                                                  // integer to hold synthesized color values
         int value = start;                                            
@@ -270,16 +262,16 @@ public class ImagePanel extends JLayeredPane {
         double value_G = (value >> 8 ) & 0xFF;
         double value_B = (value      ) & 0xFF;
         
-        double[] deltas = getDeltas( start, end, cellColors.length - 1 );  // compute change per step for each channel
+        double[] deltas = getDeltas( start, end, cellColors.length - 1 );  
         cellColors[0] = new Color(start);
         cellColors[cellColors.length - 1] = new Color(end);
         
         // fill with interpolated Colors
-        for (int i = 1; i < cellColors.length - 1; i++) {         // synthesize interpolated color 
+        for (int i = 1; i < cellColors.length - 1; i++) {         
             value_R += deltas[0];
             value_G += deltas[1];
             value_B += deltas[2];
-            
+            // interpolated color 
             intARGB = (0xFF000000) | ((int)value_R << 16) | ((int)value_G << 8) | (int)value_B;
             cellColors[i] = new Color(intARGB);
         }
@@ -327,7 +319,7 @@ public class ImagePanel extends JLayeredPane {
             curr = curr.parent;
         }
         drawLineBetweenTwoCells(prev, curr);
-        controlPanel.setSearchText(" Start search", new Color(0, 175, 0, 255) );
+        controlPanel.readySearch();
         isRunning = false;
     }
 
@@ -523,7 +515,7 @@ public class ImagePanel extends JLayeredPane {
                             n.isQueued = true;
                             n.isVisited = true;
                             n.parent = curr;
-            
+
                             drawCell(n.x, n.y, edge_color, frame_delay);
                         }
                     }
@@ -540,70 +532,69 @@ public class ImagePanel extends JLayeredPane {
             @Override
             public void run() {
 
-                                for (int i = 0; i < grid.length; i++ ) {
-                                    for (int j = 0; j < grid[0].length; j++ ) {
-                                        if(grid[i][j].equals(startPoint) || grid[i][j].equals(endPoint))
-                                            continue;
-                                        grid[i][j].isPassable = false;
-                                        grid[i][j].isVisited = false;
-                                        drawCell(grid[i][j].x, grid[i][j].y, impassable_color, 0);
-                                    }
-                                }
-                                drawStartPoint();
-                                drawEndPoint();
-                                repaint();
+                for (int i = 0; i < grid.length; i++ ) {
+                    for (int j = 0; j < grid[0].length; j++ ) {
+                        if(grid[i][j].equals(startPoint) || grid[i][j].equals(endPoint))
+                            continue;
+                        grid[i][j].isPassable = false;
+                        grid[i][j].isVisited = false;
+                        drawCell(grid[i][j].x, grid[i][j].y, impassable_color, 0);
+                    }
+                }
+                drawStartPoint();
+                drawEndPoint();
+                repaint();
 
-                                int d = 0;
-                                boolean[][] vis = new boolean[grid.length][grid[0].length];
+                int d = 0;
+                boolean[][] vis = new boolean[grid.length][grid[0].length];
 
-                                Stack<Node> stack = new Stack<Node>();
-                                Node center = grid[grid.length/2][grid[0].length/2];
-                                Node curr = center;
+                Stack<Node> stack = new Stack<Node>();
+                Node center = grid[grid.length/2][grid[0].length/2];
+                Node curr = center;
 
-                                Random rand = new Random();
-                                int rand_neighbor;
+                Random rand = new Random();
+                int rand_neighbor;
 
-                                stack.add(center);
+                stack.add(center);
 
-                                while( !stack.isEmpty() ) {
+                while( !stack.isEmpty() ) {
 
-                                    boolean flag = false;
-                                    rand_neighbor = rand.nextInt(curr.neighbors.size());
-                                    Node prev = curr;
-                                
-                                    for(int z = 0; z < curr.neighbors.size(); z++) {
+                    boolean flag = false;
+                    rand_neighbor = rand.nextInt(curr.neighbors.size());
+                    Node prev = curr;
+                
+                    for(int z = 0; z < curr.neighbors.size(); z++) {
 
-                                        int v = (z + rand_neighbor) % curr.neighbors.size();
+                        int v = (z + rand_neighbor) % curr.neighbors.size();
 
-                                            Node n = curr.neighbors.get(v);
-                                            if(flag)
-                                                vis[n.x][n.y] = true;
-                                            else if(!vis[n.x][n.y] ) {
-                                                stack.push(curr);
-                                                vis[curr.x][curr.y] = true;
-                                                prev = curr;
-                                                curr = n;
-                                                vis[curr.x][curr.y] = true;
-                                                flag = true;
-                                                d++;
-                                            }
-                                            curr.isPassable = true;
-                                            drawCell(prev.x, prev.y, cellColors[d], 0);
-                                            drawCell(curr.x, curr.y, passable_color, frame_delay);
-                                    }
-                                    if( !flag ) {
-                                        curr = stack.pop();
-                                    }
-                                }
+                            Node n = curr.neighbors.get(v);
+                            if(flag)
+                                vis[n.x][n.y] = true;
+                            else if(!vis[n.x][n.y] ) {
+                                stack.push(curr);
+                                vis[curr.x][curr.y] = true;
+                                prev = curr;
+                                curr = n;
+                                vis[curr.x][curr.y] = true;
+                                flag = true;
+                                d++;
                             }
-                  }).start();
+                            curr.isPassable = true;
+                            drawCell(prev.x, prev.y, cellColors[d], 0);
+                            drawCell(curr.x, curr.y, passable_color, frame_delay);
+                    }
+                    if( !flag ) 
+                        curr = stack.pop();
+                }
+            }
+        }).start();
     }
 
     public void setSearchState(boolean isRunning) {
         this.isRunning = isRunning;
     }
 
-    public void setFrameDelay(int delay) { // (1000 / delay) = nodes visited per second
+    public void setFrameDelay(int delay) { 
         frame_delay = delay;
     }
 

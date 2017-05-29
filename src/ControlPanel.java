@@ -5,16 +5,24 @@ import java.awt.event.*;
 public class ControlPanel extends JPanel {
 
     private ImagePanel imagePanel;
+    private int x, y, width, height;
     private boolean BFS, DFS, Dijkstra, A_star;
     private JButton startBFS, startDFS, dijkstra, a_star;
-    private Color textColor = new Color(30, 30, 30, 250);
+    private Color textColor = new Color(0, 0, 0, 250);
     private JButton startSearch;   
     private JButton createMaze;
+    private int curr_x, curr_y;
 
     public ControlPanel(ImagePanel imagePanel) {
         setLayout(new GridLayout(0, 1));
         this.imagePanel = imagePanel;
-        setBounds((int)(imagePanel.getWidth() * (1 - .2)), (int)(imagePanel.getHeight() * .25), (int)(imagePanel.getWidth() * .175), (int)(imagePanel.getHeight() * .5)  );
+        x = (int)(imagePanel.getWidth() * (1 - .2));
+        y = (int)(imagePanel.getHeight() * .25);
+        width = (int)(imagePanel.getWidth() * .175);
+        height = (int)(imagePanel.getHeight() * .5);
+        setBounds(x, y, width, height  );
+        curr_x = x;
+        curr_y = y;
 
         JButton clearObstacles, clearPath;
 
@@ -118,7 +126,7 @@ public class ControlPanel extends JPanel {
 
         JLabel algo_label = new JLabel(" Algorithms");
         algo_label.setFont(new Font("plain", Font.BOLD, 14));
-        algo_label.setForeground( textColor );
+        algo_label.setForeground( new Color(0xffcccccc) );
 
         startSearch.setFont(new Font("plain", Font.BOLD, 13));
         startDFS.setFont(new Font("plain", Font.BOLD, 13));
@@ -157,9 +165,45 @@ public class ControlPanel extends JPanel {
 
         setBackground(new Color(50, 50, 50, 200));
         setBackground(new Color(0xFF, 0xD7, 0x00, 120));
+        setBackground(new Color(50, 50, 50, 200));
         // this.setBorder(BorderFactory.createLineBorder(new Color(30, 30, 30, 220), 3));
         setVisible(true);
         setOpaque(true);
+
+        addMouseListener( new MouseAdapter()
+                             {
+                public void mousePressed( MouseEvent event )
+                {
+                    if(event.getButton() == MouseEvent.BUTTON1)
+                    {
+                        x = (int)event.getPoint().getX();
+                        y = (int)event.getPoint().getY();
+                    }
+                    else if(event.getButton() == MouseEvent.BUTTON2)
+                    {
+                    }
+                    else if(event.getButton() == MouseEvent.BUTTON3)
+                    {
+                    }
+                }
+            } );
+
+       addMouseMotionListener( new MouseMotionAdapter()
+                                   {
+                public void mouseDragged(MouseEvent event)
+                {
+                    Point p = event.getPoint();
+                    curr_x += (p.getX() - x);
+                    curr_y += (p.getY() - y);
+                    setBounds(curr_x, curr_y, width, height);
+                }
+            } );
+            addMouseListener( new MouseAdapter()
+                             {
+                public void mouseReleased(MouseEvent event)
+                {
+                }
+            } );
     }
 
     private void clearAll() {

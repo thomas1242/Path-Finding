@@ -259,6 +259,10 @@ public class ImagePanel extends JLayeredPane {
 
         int start =   0xffcccccc;     // start color
         int end =   0x0fFFD700;       // end color
+
+        // int temp = start;
+        // start = end;
+        // end = temp;
         
         int intARGB;                                                  // integer to hold synthesized color values
         int value = start;                                            
@@ -538,15 +542,18 @@ public class ImagePanel extends JLayeredPane {
 
                                 for (int i = 0; i < grid.length; i++ ) {
                                     for (int j = 0; j < grid[0].length; j++ ) {
-                                        if( grid[i][j].equals(startPoint) || grid[i][j].equals(endPoint))
+                                        if(grid[i][j].equals(startPoint) || grid[i][j].equals(endPoint))
                                             continue;
                                         grid[i][j].isPassable = false;
                                         grid[i][j].isVisited = false;
                                         drawCell(grid[i][j].x, grid[i][j].y, impassable_color, 0);
                                     }
                                 }
+                                drawStartPoint();
+                                drawEndPoint();
                                 repaint();
 
+                                int d = 0;
                                 boolean[][] vis = new boolean[grid.length][grid[0].length];
 
                                 Stack<Node> stack = new Stack<Node>();
@@ -578,9 +585,10 @@ public class ImagePanel extends JLayeredPane {
                                                 curr = n;
                                                 vis[curr.x][curr.y] = true;
                                                 flag = true;
+                                                d++;
                                             }
                                             curr.isPassable = true;
-                                            drawCell(prev.x, prev.y, edge_color, 0);
+                                            drawCell(prev.x, prev.y, cellColors[d], 0);
                                             drawCell(curr.x, curr.y, passable_color, frame_delay);
                                     }
                                     if( !flag ) {
@@ -616,7 +624,7 @@ class SpeedSlider extends JPanel {
 
         label = new JLabel(" Speed");
         label.setFont(new Font("plain", Font.BOLD, 14));
-        label.setForeground( new Color(30, 30, 30, 250) );
+        label.setForeground( new Color(0xffcccccc) );
 
         slider = new JSlider(0, 128, 64);
         slider.addChangeListener(new ChangeListener() {
@@ -646,7 +654,7 @@ class SizeSlider extends JPanel {
 
         label = new JLabel();
         label.setFont(new Font("plain", Font.BOLD, 14));
-        label.setForeground( new Color(30, 30, 30, 255) );
+        label.setForeground( new Color(0xffcccccc) );
 
 
         slider = new JSlider(2, 180, 60);

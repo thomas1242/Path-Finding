@@ -6,7 +6,8 @@ public class ControlPanel extends JPanel {
 
     private ImagePanel imagePanel;
     private boolean BFS, DFS, Dijkstra, A_star;
-    private JButton startSearch, startBFS, startDFS, dijkstra, a_star;
+    private JButton startSearch, createMaze;
+    private JButton startBFS, startDFS, dijkstra, a_star;
     private Color textColor = new Color(0, 0, 0, 250);
     private int x, y, curr_x, curr_y, width, height; 
 
@@ -37,11 +38,16 @@ public class ControlPanel extends JPanel {
             }
         });
 
-        JButton createMaze = new JButton("Create Maze");
+        createMaze = new JButton("Create Maze");
         createMaze.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                imagePanel.createMaze();
+                if(createMaze.getText().equals("Create Maze")) 
+                    createMaze();
+                else if (createMaze.getText().equals( "Pause"))  
+                    pauseMaze();
+                else if (createMaze.getText().equals( "Resume")) 
+                   resumeMaze();
             }
         });
 
@@ -187,6 +193,15 @@ public class ControlPanel extends JPanel {
         startSearch.setForeground(c);
     }
 
+    public void setMazeText(String s) {        
+        createMaze.setText(s);
+    }
+
+    public void setMazeText(String s, Color c) {
+        createMaze.setText(s);
+        createMaze.setForeground(c);
+    }
+
     public void runSearch() {
         startSearch.setText( " Pause");
         startSearch.setForeground(  Color.RED  );
@@ -204,6 +219,29 @@ public class ControlPanel extends JPanel {
         startSearch.setText( " Pause");
         startSearch.setForeground(  Color.RED  );
         imagePanel.setSearchState(true);
+    }
+
+    public void createMaze() {
+        createMaze.setText( "Pause");
+        createMaze.setForeground(  Color.RED  );
+        imagePanel.setSearchState(true);
+        imagePanel.createMaze();
+    }
+
+    public void pauseMaze() {
+        createMaze.setText( "Resume");
+        createMaze.setForeground(  new Color(0, 175, 0, 255)  );
+        imagePanel.setSearchState(false);
+    }
+
+    public void resumeMaze() {
+        createMaze.setText( "Pause");
+        createMaze.setForeground(  Color.RED  );
+        imagePanel.setSearchState(true);
+    }
+
+    public void readyMaze() {
+        setMazeText("Create Maze", textColor );
     }
 
     public void readySearch() {

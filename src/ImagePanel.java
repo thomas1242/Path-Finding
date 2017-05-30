@@ -558,6 +558,7 @@ public class ImagePanel extends JLayeredPane {
                 stack.add(center);
 
                 while( !stack.isEmpty() ) {
+                    while(paused()) {}
 
                     boolean flag = false;
                     rand_neighbor = rand.nextInt(curr.neighbors.size());
@@ -586,6 +587,8 @@ public class ImagePanel extends JLayeredPane {
                     if( !flag ) 
                         curr = stack.pop();
                 }
+
+                controlPanel.readyMaze();
             }
         }).start();
     }

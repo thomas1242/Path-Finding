@@ -27,7 +27,7 @@ public class ImagePanel extends JLayeredPane {
     private Node[][] grid  = null;
     private Node startPoint, endPoint;
     private int cell_width  = 60;
-    private int frame_delay = 32;
+    private int frame_delay = 25;
     private boolean draggingStart = false, draggingEnd  = false;
     private boolean drawingWalls  = false, erasingWalls = false;
     private Color[] cellColors;
@@ -72,7 +72,7 @@ public class ImagePanel extends JLayeredPane {
 
     public void defaultStartEndLocs() {
         setStartPoint((int)(grid.length * 0.3), (int)(grid[0].length * 0.5));
-        setEndPoint((int)(grid.length * 0.7), (int)(grid[0].length * 0.5));
+        setEndPoint((int)(grid.length * 0.65), (int)(grid[0].length * 0.5));
     }
 
     public void addComponents() {
@@ -163,6 +163,7 @@ public class ImagePanel extends JLayeredPane {
         } catch (InterruptedException e) {
              e.printStackTrace();
         }
+    
     }
 
     public void drawLineBetweenTwoCells(Node n1, Node n2) {
@@ -185,7 +186,7 @@ public class ImagePanel extends JLayeredPane {
 
     public void clearWalls() {
         for (int i = 0; i < grid.length; i++)
-            for (int j = 0; j < grid[i].length; j++)
+            for (int j = 0; j < grid[i].length; j++) 
                 grid[i][j].isPassable = true;
         drawAll();
     }
@@ -573,13 +574,17 @@ class SpeedSlider extends JPanel {
         label.setFont(new Font("plain", Font.BOLD, 14));
         label.setForeground( new Color(0xffbbbbbb) );
 
-        slider = new JSlider(0, 128, 64);
+        slider = new JSlider(0, 50, 25);
         slider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 imagePanel.setFrameDelay(slider.getValue());
             }
         });;
+
+        slider.setMinorTickSpacing(1);
+        slider.setPaintTicks(true);
+        slider.setSnapToTicks(true);
 
         add(label, BorderLayout.CENTER);
         add(slider, BorderLayout.SOUTH);
@@ -604,7 +609,7 @@ class SizeSlider extends JPanel {
         label.setForeground( new Color(0xffbbbbbb) );
 
 
-        slider = new JSlider(2, 180, 60);
+        slider = new JSlider(2, 120, 60);
         label.setText(" " + String.valueOf(imagePanel.getHeight() / slider.getValue() + 1) + " rows , " + String.valueOf(imagePanel.getWidth() / slider.getValue() + 1)  + " columns ");
 
         slider.addChangeListener(new ChangeListener() {
@@ -615,6 +620,10 @@ class SizeSlider extends JPanel {
                 imagePanel.updateCellSize( size );
             }
         });;
+
+        slider.setMinorTickSpacing(3);
+        slider.setPaintTicks(true);
+        slider.setSnapToTicks(true);
 
       add(label, BorderLayout.CENTER);
       add(slider, BorderLayout.SOUTH);

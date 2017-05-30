@@ -34,19 +34,16 @@ public class ImagePanel extends JLayeredPane {
     private Color[] cellColors;
 
     private ControlPanel controlPanel;
-    private boolean isRunning = false;
+    private static boolean isRunning = false;
 
     public ImagePanel(int width, int height) {
         setBounds(0, 0, width, height);
         image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         g2d = (Graphics2D)image.getGraphics();
-
+       
         createGrid();
-        setNeighbors();
-        defaultStartEndLocs();
         addComponents();
         addListeners();
-
         drawAll();
     }
 
@@ -61,21 +58,17 @@ public class ImagePanel extends JLayeredPane {
     }
 
     public boolean isValidLoc(int x, int y) {
-        return !( x >= grid.length || y >= grid[0].length || x < 0 || y < 0);
+        return !( x >= grid.length || y >= grid[0].length || x < 0 || y < 0 );
     }
 
     public void setStartPoint(int x, int y) {
-        if( !isValidLoc(x, y) || !grid[x][y].isPassable)
-            return;
-
-        startPoint = grid[x][y];
+        if( isValidLoc(x, y) && grid[x][y].isPassable )
+            startPoint = grid[x][y];
     }
 
     public void setEndPoint(int x, int y) {
-        if( !isValidLoc(x, y) || !grid[x][y].isPassable)
-            return;
-
-        endPoint = grid[x][y];
+        if( isValidLoc(x, y) && grid[x][y].isPassable )
+            endPoint = grid[x][y];
     }
 
     public void defaultStartEndLocs() {
@@ -97,9 +90,24 @@ public class ImagePanel extends JLayeredPane {
                 grid[i][j] = new Node(i, j);
 
         generateCellColors();
-        }
+        setNeighbors();
+        defaultStartEndLocs();
+    }
 
-    public void setNeighbors() {    // O( 9*nm where n = #rows, m = #cols)
+    public void setNeighbors() {    
+
+         for (int i = 0; i < grid.length; i++) 
+            for (int j = 0; j < grid[i].length; j++) 
+                for (int n = -1; n <= 1; n++) 
+                    for (int m = -1; m <= 1; m++) {
+                        int x_step = i + n;
+                        int y_step = j + m;
+                        if(m == 0 || n == 0)
+                            if (!(i == x_step && j == y_step) && x_step < grid.length && x_step >= 0 && y_step < grid[i].length && y_step >= 0)
+                                grid[i][j].neighbors.add(grid[x_step][y_step]);
+                    }
+                
+        // O( 9*nm where n = #rows, m = #cols)
         // for (int i = 0; i < grid.length; i++) {
         //     for (int j = 0; j < grid[i].length; j++) {
         //         for (int n = -1; n <= 1; n++) {
@@ -112,46 +120,20 @@ public class ImagePanel extends JLayeredPane {
         //         }
         //     }
         // }
-
-         for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                for (int n = -1; n <= 1; n++) {
-                    for (int m = -1; m <= 1; m++) {
-                        int x_step = i + n;
-                        int y_step = j + m;
-                        if(m == 0 || n == 0)
-                            if (!(i == x_step && j == y_step) && x_step < grid.length && x_step >= 0 && y_step < grid[i].length && y_step >= 0)
-                                grid[i][j].neighbors.add(grid[x_step][y_step]);
-                    }
-                }
-            }
-        }
     }
 
     public void drawGrid() {
         g2d.setColor(passable_color);
         g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
 
-        int x, y;
-
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
-
-                x = i * cell_width + 1;
-                y = j * cell_width + 1;
-
-                if (!grid[i][j].isPassable) {
-                    g2d.setColor(impassable_color);
-                    g2d.fillRect(x, y, cell_width - 1, cell_width - 1);
-                }
-                else if (grid[i][j].isQueued) {
-                    g2d.setColor(edge_color);
-                    g2d.fillRect(x, y, cell_width - 1, cell_width - 1);
-                }
-                else if (grid[i][j].isVisited) {
-                    g2d.setColor(visited_color);
-                    g2d.fillRect(x, y, cell_width - 1, cell_width - 1);
-                }
+                if (!grid[i][j].isPassable) 
+                    drawCell(i, j, impassable_color, 0);
+                else if (grid[i][j].isQueued) 
+                    drawCell(i, j, edge_color, 0);
+                else if (grid[i][j].isVisited) 
+                    drawCell(i, j, visited_color, 0);
             }
         }
 
@@ -202,8 +184,6 @@ public class ImagePanel extends JLayeredPane {
     public void updateCellSize(int size) {
         cell_width = size;
         createGrid();
-        setNeighbors();
-        defaultStartEndLocs();
         drawAll();
     }
 
@@ -222,7 +202,6 @@ public class ImagePanel extends JLayeredPane {
                 grid[i][j].isQueued = false;
             }
         }
-
         drawAll();
     }
 
@@ -250,11 +229,10 @@ public class ImagePanel extends JLayeredPane {
 
     private void generateCellColors() {
 
-        // cellColors = new Color[ (int)Math.sqrt( Math.pow(grid.length, 2) + Math.pow(grid[0].length, 2) ) ];
         cellColors = new Color[ grid.length * grid[0].length ];
 
-        int start =   0xffcccccc;     // start color
-        int end =   0x0fFFD700;       // end color
+        int start =   0xffcccccc;       // start color
+        int end   =   0x0fFFD700;       // end color
         
         int intARGB;                                                  // integer to hold synthesized color values
         int value = start;                                            
@@ -271,7 +249,7 @@ public class ImagePanel extends JLayeredPane {
             value_R += deltas[0];
             value_G += deltas[1];
             value_B += deltas[2];
-            // interpolated color 
+             
             intARGB = (0xFF000000) | ((int)value_R << 16) | ((int)value_G << 8) | (int)value_B;
             cellColors[i] = new Color(intARGB);
         }
@@ -279,21 +257,21 @@ public class ImagePanel extends JLayeredPane {
     
     public void drawPath(Node curr) {
         int[] colorArray = new int[getPathLength(curr) - 1];
-        int start =   (255 << 24) | (0 << 16) | (255 << 8);     // start color
-        int end =   (255 << 24) | (255 << 16) | (0 << 8);       // end color
+        int start =   (255 << 24) | (0 << 16) | (255 << 8);     
+        int end =   (255 << 24) | (255 << 16) | (0 << 8);       
         
-        int intARGB;                                                  // integer to hold synthesized color values
+        int intARGB;                                                  
         int value = start;                                            
         double value_R = (value >> 16) & 0xFF;
         double value_G = (value >> 8 ) & 0xFF;
         double value_B = (value      ) & 0xFF;
         
-        double[] deltas = getDeltas( start, end, colorArray.length - 1 );  // compute change per step for each channel
+        double[] deltas = getDeltas( start, end, colorArray.length - 1 );  
         colorArray[0] = start;
         colorArray[colorArray.length - 1] = end;
         
         // fill with interpolated Colors
-        for (int i = 1; i < colorArray.length - 1; i++) {         // synthesize interpolated color 
+        for (int i = 1; i < colorArray.length - 1; i++) {         
             value_R += deltas[0];
             value_G += deltas[1];
             value_B += deltas[2];
@@ -326,8 +304,8 @@ public class ImagePanel extends JLayeredPane {
     public int getPathLength(Node node) {
         int n = 0;
         while(node != null) {
-            n++;
             node = node.parent;
+            n++;
         }
         return n;
     }
@@ -419,7 +397,7 @@ public class ImagePanel extends JLayeredPane {
         if( isRunning )
             return false;
         try {
-            Thread.sleep(25);
+             Thread.sleep(50);
         }
         catch(InterruptedException e) {}
         return isRunning == false;
@@ -618,7 +596,7 @@ class SpeedSlider extends JPanel {
 
         label = new JLabel(" Speed");
         label.setFont(new Font("plain", Font.BOLD, 14));
-        label.setForeground( new Color(0xffcccccc) );
+        label.setForeground( new Color(0xffbbbbbb) );
 
         slider = new JSlider(0, 128, 64);
         slider.addChangeListener(new ChangeListener() {
@@ -648,7 +626,7 @@ class SizeSlider extends JPanel {
 
         label = new JLabel();
         label.setFont(new Font("plain", Font.BOLD, 14));
-        label.setForeground( new Color(0xffcccccc) );
+        label.setForeground( new Color(0xffbbbbbb) );
 
 
         slider = new JSlider(2, 180, 60);

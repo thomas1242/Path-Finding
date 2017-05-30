@@ -122,7 +122,7 @@ public class ControlPanel extends JPanel {
         clearPath.setFont(new Font("plain", Font.BOLD, 13));
         createMaze.setFont(new Font("plain", Font.BOLD, 13));
 
-        algo_label.setForeground( new Color(0xffcccccc) );
+        algo_label.setForeground( new Color(0xffbbbbbb) );
         startSearch.setForeground(textColor);
         clearObstacles.setForeground(textColor);
         clearPath.setForeground(textColor);

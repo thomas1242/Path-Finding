@@ -24,7 +24,6 @@ public class ImagePanel extends JLayeredPane {
     private Color path_line_color  =  Color.BLACK;
     private Color path_cell_color  =  new Color(0xff9bcc5a);
 
-    // Grid
     private Node[][] grid  = null;
     private Node startPoint, endPoint;
     private int cell_width  = 60;
@@ -82,7 +81,6 @@ public class ImagePanel extends JLayeredPane {
     }
 
     public void createGrid() {
-
         grid = new Node[image.getWidth()/cell_width + 1][image.getHeight()/cell_width + 1];
 
         for (int i = 0; i < grid.length; i++)
@@ -130,10 +128,10 @@ public class ImagePanel extends JLayeredPane {
             for (int j = 0; j < grid[i].length; j++) {
                 if (!grid[i][j].isPassable) 
                     drawCell(i, j, impassable_color, 0);
-                else if (grid[i][j].isQueued) 
-                    drawCell(i, j, edge_color, 0);
                 else if (grid[i][j].isVisited) 
                     drawCell(i, j, visited_color, 0);
+                else if (grid[i][j].isQueued) 
+                    drawCell(i, j, edge_color, 0);
             }
         }
 
@@ -141,12 +139,11 @@ public class ImagePanel extends JLayeredPane {
     }
 
     private void drawGridLines() {
-        // grid lines
         g2d.setStroke( new BasicStroke( 1.0f,  BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND ) );
         g2d.setColor(grid_line_color);
-        for (int i = 0; i < image.getHeight(); i+=cell_width)
+        for (int i = 0; i < image.getHeight(); i += cell_width)
             g2d.drawLine(0, i, image.getWidth(), i );
-        for (int i = 0; i < image.getWidth(); i+=cell_width)
+        for (int i = 0; i < image.getWidth(); i += cell_width)
             g2d.drawLine(i, 0, i, image.getHeight() );
     }
 
@@ -161,17 +158,17 @@ public class ImagePanel extends JLayeredPane {
         g2d.fillRect(x, y, cell_width - 1, cell_width - 1);    
         repaint();
 
-         try {
+        try {
              Thread.sleep(delay);
-            } catch (InterruptedException e) {
+        } catch (InterruptedException e) {
              e.printStackTrace();
-            }
+        }
     }
 
     public void drawLineBetweenTwoCells(Node n1, Node n2) {
         int x1 = n1.x * cell_width + cell_width / 2 + 1;
-        int y1 = n1.y * cell_width + cell_width / 2 + 1;
         int x2 = n2.x * cell_width + cell_width / 2 + 1;
+        int y1 = n1.y * cell_width + cell_width / 2 + 1;
         int y2 = n2.y * cell_width + cell_width / 2 + 1;
 
         g2d.setStroke( new BasicStroke( (float)(cell_width * .1),  BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND ) );
@@ -179,7 +176,6 @@ public class ImagePanel extends JLayeredPane {
         g2d.drawLine(x1, y1, x2, y2);
         repaint();
     }
-
 
     public void updateCellSize(int size) {
         cell_width = size;
@@ -191,7 +187,6 @@ public class ImagePanel extends JLayeredPane {
         for (int i = 0; i < grid.length; i++)
             for (int j = 0; j < grid[i].length; j++)
                 grid[i][j].isPassable = true;
-
         drawAll();
     }
 
@@ -205,7 +200,7 @@ public class ImagePanel extends JLayeredPane {
         drawAll();
     }
 
-     private double[] getDeltas(int start, int end, int n)
+    private double[] getDeltas(int start, int end, int n)
     {
         double start_R, start_G, start_B,       
                  end_R,   end_G,   end_B,
@@ -227,69 +222,49 @@ public class ImagePanel extends JLayeredPane {
         return deltas;                                      
     }
 
-    private void generateCellColors() {
+    private Color[] getColors(int start, int end, int length) {
 
-        cellColors = new Color[ grid.length * grid[0].length ];
-
-        int start =   0xffcccccc;       // start color
-        int end   =   0x0fFFD700;       // end color
+        Color[] colors = new Color[length];
         
-        int intARGB;                                                  // integer to hold synthesized color values
+        int intARGB;                            // integer to hold synthesized color values
         int value = start;                                            
         double value_R = (value >> 16) & 0xFF;
         double value_G = (value >> 8 ) & 0xFF;
         double value_B = (value      ) & 0xFF;
         
-        double[] deltas = getDeltas( start, end, cellColors.length - 1 );  
-        cellColors[0] = new Color(start);
-        cellColors[cellColors.length - 1] = new Color(end);
+        double[] deltas = getDeltas( start, end, colors.length - 1 );  
+        colors[0] = new Color(start);
+        colors[colors.length - 1] = new Color(end);
         
         // fill with interpolated Colors
-        for (int i = 1; i < cellColors.length - 1; i++) {         
+        for (int i = 1; i < colors.length - 1; i++) {         
             value_R += deltas[0];
             value_G += deltas[1];
             value_B += deltas[2];
              
             intARGB = (0xFF000000) | ((int)value_R << 16) | ((int)value_G << 8) | (int)value_B;
-            cellColors[i] = new Color(intARGB);
+            colors[i] = new Color(intARGB);
         }
+
+        return colors;
+    }
+
+    private void generateCellColors() {
+        cellColors = getColors( 0xffcccccc, 0x0fFFD700, grid.length * grid[0].length);
     }
     
     public void drawPath(Node curr) {
-        int[] colorArray = new int[getPathLength(curr) - 1];
-        int start =   (255 << 24) | (0 << 16) | (255 << 8);     
-        int end =   (255 << 24) | (255 << 16) | (0 << 8);       
-        
-        int intARGB;                                                  
-        int value = start;                                            
-        double value_R = (value >> 16) & 0xFF;
-        double value_G = (value >> 8 ) & 0xFF;
-        double value_B = (value      ) & 0xFF;
-        
-        double[] deltas = getDeltas( start, end, colorArray.length - 1 );  
-        colorArray[0] = start;
-        colorArray[colorArray.length - 1] = end;
-        
-        // fill with interpolated Colors
-        for (int i = 1; i < colorArray.length - 1; i++) {         
-            value_R += deltas[0];
-            value_G += deltas[1];
-            value_B += deltas[2];
-            
-            intARGB = (0xFF000000) | ((int)value_R << 16) | ((int)value_G << 8) | (int)value_B;
-            colorArray[i] = intARGB;
-        }
-        int n = colorArray.length;
+        Color[] colors = getColors( 0xff00ff00, 0xffff0000, getPathLength(curr) );
+        int n = colors.length;
 
         Node prev = curr;
         curr = curr.parent;
         while(curr.parent != null) {
             while(paused()) {}
-            drawCell(curr.x, curr.y, new Color(colorArray[--n]), frame_delay);
+            drawCell(curr.x, curr.y, colors[--n], frame_delay);
             drawLineBetweenTwoCells(prev, curr);
-
             try {
-                Thread.sleep((int)(frame_delay * 1.5));
+                Thread.sleep((int)(frame_delay * 2.5));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -321,9 +296,8 @@ public class ImagePanel extends JLayeredPane {
 
         addMouseListener( new MouseListener()
         {
-            @Override
-            public void mouseClicked(MouseEvent e) {}
 
+            @Override
             public void mousePressed(MouseEvent event )
             {
                 Point point = event.getPoint();
@@ -354,6 +328,9 @@ public class ImagePanel extends JLayeredPane {
                 else if (erasingWalls)
                     erasingWalls = false;
             }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {}
 
             @Override
             public void mouseEntered(MouseEvent e) {}
@@ -438,7 +415,6 @@ public class ImagePanel extends JLayeredPane {
 
                     curr = q.poll();
                     curr.isVisited = true;
-                    curr.isQueued = false;
 
                     if(curr.equals(endPoint))
                         break;
@@ -452,7 +428,7 @@ public class ImagePanel extends JLayeredPane {
                             n.isVisited = true;
                             n.parent = curr;
                            
-                             drawCell(n.x, n.y, edge_color, frame_delay);
+                            drawCell(n.x, n.y, edge_color, frame_delay);
                         }
                     }
                 }
@@ -480,7 +456,6 @@ public class ImagePanel extends JLayeredPane {
 
                     curr = stack.pop();
                     curr.isVisited = true;
-                    curr.isQueued = false;
 
                     drawCell(curr.x, curr.y, cellColors[d++], frame_delay);
 

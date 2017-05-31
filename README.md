@@ -24,7 +24,7 @@ java -cp Path-Finding/src Main
 * Click start search.<br>
 
 
-![DFS and BFS](/images/BFS_DFS.gif)
+![DFS and BFS](/images/demo.gif)
 
 
 

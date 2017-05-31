@@ -492,9 +492,11 @@ public class ImagePanel extends JLayeredPane {
                             continue;
                         grid[i][j].isPassable = false;
                         grid[i][j].isVisited = false;
-                        drawCell(grid[i][j].x, grid[i][j].y, impassable_color, 0);
                     }
                 }
+                g2d.setColor( impassable_color );
+                g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
+
                 drawStartPoint();
                 drawEndPoint();
                 repaint();

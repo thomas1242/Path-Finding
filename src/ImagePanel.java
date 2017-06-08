@@ -385,6 +385,12 @@ public class ImagePanel extends JLayeredPane {
         return (int)Math.sqrt( Math.pow(startPoint.x - n.x, 2) + Math.pow(startPoint.y - n.y, 2) );
     }
 
+    public void Dijkstra() {
+
+        // TODO
+        
+    }
+
     public void A_Star() {
 
         LinkedList<Node> openSet = new LinkedList<Node>();

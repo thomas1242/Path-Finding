@@ -256,6 +256,10 @@ public class ControlPanel extends JPanel {
             imagePanel.BFS();
         else if (DFS)
             imagePanel.DFS();
+        else if (A_star)
+            imagePanel.A_Star();
+        else if (Dijkstra)
+            imagePanel.Dijkstra();
         else
             readySearch();
     }

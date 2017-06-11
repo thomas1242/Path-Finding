@@ -7,12 +7,14 @@ class Node {
     List<Node> neighbors;
     boolean isPassable, isVisited, isQueued;
     int x, y;
+    double f, g;
 
     public Node(int x, int y) {
         this.x = x;
         this.y = y;
         isPassable = true;
         neighbors = new LinkedList<Node>();
+        f = g = 100000000;
     }
 
     public boolean equals(Node c) {

@@ -393,16 +393,77 @@ public class ImagePanel extends JLayeredPane {
 
     public void A_Star() {
 
-        LinkedList<Node> openSet = new LinkedList<Node>();
-        LinkedList<Node> closedSet = new LinkedList<Node>();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-        openSet.add( startPoint );
+                    int d = 0;
 
-        Node curr = null;
+                    LinkedList<Node> openSet = new LinkedList<Node>();
+                    LinkedList<Node> closedSet = new LinkedList<Node>();
 
-        while( !openSet.isEmpty() ) {
-            // TODO
+                    openSet.add( startPoint );
+
+                    Node curr = null;
+
+                    while( !openSet.isEmpty() ) {
+                        
+                        curr = openSet.get( getLowest(openSet) );
+                        openSet.remove(curr);
+                        closedSet.add(curr);
+                        curr.g = distance_between(startPoint, curr);
+                        curr.f = distance_between(curr, endPoint);
+
+                        if(curr.equals(endPoint))
+                            break;
+
+                        drawCell(curr.x, curr.y, cellColors[d++ ], frame_delay);
+
+                         for (Node n : curr.neighbors) {
+                            if(!n.isPassable || closedSet.contains(n))
+                                continue;
+
+                            if(!openSet.contains(n))
+                                openSet.add(n);
+
+                            n.isQueued = true;
+                            n.isVisited = true;
+                            drawCell(n.x, n.y, edge_color, frame_delay);
+                            
+                            double temp = curr.g + distance_between(curr, n);
+
+                            if(temp >= n.g) // not a better path
+                                continue;
+
+                             n.parent = curr;
+                             n.g = temp;
+                             n.f = temp + distance_between(n , endPoint);
+                        }
+                    }
+
+                    drawPath(curr);
+         }
+        }).start();
+    }
+
+
+    public double distance_between(Node a, Node b) {
+        return Math.sqrt( Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2) );
+    }
+
+
+    public int getLowest(LinkedList<Node> list) {
+
+        double min = list.get(0).f;
+        int n = 0;
+        for(int i = 0; i < list.size(); i++) {
+            if(list.get(i).f < min) {
+                n = i;
+                min = list.get(i).f;
+            }
         }
+
+        return n;
     }
 
     public void BFS() {

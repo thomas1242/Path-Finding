@@ -14,7 +14,7 @@ class Node {
         this.y = y;
         isPassable = true;
         neighbors = new LinkedList<Node>();
-        f = g = 100000000;
+        f = g = Double.POSITIVE_INFINITY;
     }
 
     public boolean equals(Node c) {

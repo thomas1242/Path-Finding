@@ -397,12 +397,22 @@ public class ImagePanel extends JLayeredPane {
             @Override
             public void run() {
 
+                    for (int i = 0; i < grid.length; i++ ) {
+                        for (int j = 0; j < grid[0].length; j++ ) {
+                            if(grid[i][j].equals(startPoint) || grid[i][j].equals(endPoint))
+                                continue;
+                            grid[i][j].g = Double.MAX_VALUE;
+                            grid[i][j].f = Double.MAX_VALUE;
+                        }
+                    }
+
                     int d = 0;
 
                     LinkedList<Node> openSet = new LinkedList<Node>();
                     LinkedList<Node> closedSet = new LinkedList<Node>();
 
                     openSet.add( startPoint );
+                    startPoint.f = distance_between(startPoint, endPoint);
 
                     Node curr = null;
 
@@ -420,7 +430,10 @@ public class ImagePanel extends JLayeredPane {
                         drawCell(curr.x, curr.y, cellColors[d++ ], frame_delay);
 
                          for (Node n : curr.neighbors) {
-                            if(!n.isPassable || closedSet.contains(n))
+                            if(!n.isPassable)
+                                closedSet.add(n);
+
+                            if(closedSet.contains(n))
                                 continue;
 
                             if(!openSet.contains(n))

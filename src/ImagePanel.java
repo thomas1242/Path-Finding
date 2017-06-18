@@ -488,7 +488,6 @@ public class ImagePanel extends JLayeredPane {
 
                 LinkedList<Node> q = new LinkedList<Node>();
                 q.add( startPoint );
-                startPoint.isVisited = true;
 
                 Node curr = null;
 
@@ -496,6 +495,7 @@ public class ImagePanel extends JLayeredPane {
                     while( paused() ) {}
 
                     curr = q.poll();
+                    curr.isVisited = true;
 
                     if(curr.equals(endPoint))
                         break;
@@ -529,7 +529,6 @@ public class ImagePanel extends JLayeredPane {
 
                 Stack<Node> stack = new Stack<Node>();
                 stack.push( startPoint );
-                startPoint.isVisited;
 
                 Node curr = null;
 
@@ -537,6 +536,7 @@ public class ImagePanel extends JLayeredPane {
                     while( paused() ) {}
 
                     curr = stack.pop();
+                    curr.isVisited = true;
 
                     drawCell(curr.x, curr.y, cellColors[d++], frame_delay);
 

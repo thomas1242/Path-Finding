@@ -387,7 +387,42 @@ public class ImagePanel extends JLayeredPane {
 
     public void Dijkstra() {
 
-        // TODO
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int d = 0;
+
+                LinkedList<Node> q = new LinkedList<Node>();
+                q.add( startPoint );
+
+                Node curr = null;
+
+                while( !q.isEmpty() ) {
+                    while( paused() ) {}
+
+                    curr = q.poll();
+                    curr.isVisited = true;
+
+                    if(curr.equals(endPoint))
+                        break;
+
+                    drawCell(curr.x, curr.y, cellColors[d++ ], frame_delay);//vis
+
+                    for (Node n : curr.neighbors) {
+                        if(!n.isVisited && n.isPassable) {
+                            q.add(n);
+                            n.isQueued = true;
+                            n.isVisited = true;
+                            n.parent = curr;
+                           
+                            drawCell(n.x, n.y, edge_color, frame_delay);
+                        }
+                    }
+                }
+
+                drawPath(curr);
+            }
+        }).start();
         
     }
 

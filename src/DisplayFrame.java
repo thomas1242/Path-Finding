@@ -3,11 +3,10 @@ import java.awt.*;
 
 public class DisplayFrame extends JFrame {
 
-    ImagePanel imagePanel;
+    private ImagePanel imagePanel;
 
     public DisplayFrame(int width, int height) {
 
-//      this.setTitle( "Path Finder" );
         this.setSize( width, height );
         imagePanel = new ImagePanel(width, height);
         add(imagePanel, BorderLayout.CENTER);

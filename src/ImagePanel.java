@@ -2,7 +2,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
-
 import java.awt.image.BufferedImage;
 import java.util.*;
 
@@ -22,18 +21,18 @@ public class ImagePanel extends JLayeredPane {
     private Color edge_color       =  new Color(0xffFFF1A5); // 0xffFFD700
     private Color grid_line_color  =  new Color(0, 0, 0, 255);
     private Color path_line_color  =  Color.BLACK;
-    private Color path_cell_color  =  new Color(0xff9bcc5a);
 
+    // Grid
     private Node[][] grid  = null;
     private Node startPoint, endPoint;
     private int cell_width  = 60;
-    private int frame_delay = 25;
-    private boolean draggingStart = false, draggingEnd  = false;
-    private boolean drawingWalls  = false, erasingWalls = false;
     private Color[] cellColors;
 
     private ControlPanel controlPanel;
+    private boolean draggingStart = false, draggingEnd  = false;
+    private boolean drawingWalls  = false, erasingWalls = false;
     private static boolean isRunning = false;
+    private int frame_delay = 25;
 
     public ImagePanel(int width, int height) {
         setBounds(0, 0, width, height);
@@ -92,32 +91,17 @@ public class ImagePanel extends JLayeredPane {
         defaultStartEndLocs();
     }
 
-    public void setNeighbors() {    
-
+    public void setNeighbors() {
          for (int i = 0; i < grid.length; i++) 
             for (int j = 0; j < grid[i].length; j++) 
                 for (int n = -1; n <= 1; n++) 
                     for (int m = -1; m <= 1; m++) {
                         int x_step = i + n;
                         int y_step = j + m;
-                        if(m == 0 || n == 0)
+                        if (m == 0 || n == 0)
                             if (!(i == x_step && j == y_step) && x_step < grid.length && x_step >= 0 && y_step < grid[i].length && y_step >= 0)
                                 grid[i][j].neighbors.add(grid[x_step][y_step]);
                     }
-                
-        // O( 9*nm where n = #rows, m = #cols)
-        // for (int i = 0; i < grid.length; i++) {
-        //     for (int j = 0; j < grid[i].length; j++) {
-        //         for (int n = -1; n <= 1; n++) {
-        //             for (int m = -1; m <= 1; m++) {
-        //                 int x_step = i + n;
-        //                 int y_step = j + m;
-        //                 if (!(i == x_step && j == y_step) && x_step < grid.length && x_step >= 0 && y_step < grid[i].length && y_step >= 0)
-        //                     grid[i][j].neighbors.add(grid[x_step][y_step]);
-        //             }
-        //         }
-        //     }
-        // }
     }
 
     public void drawGrid() {
@@ -679,9 +663,9 @@ public class ImagePanel extends JLayeredPane {
 
 class SpeedSlider extends JPanel {
 
-    ImagePanel imagePanel;
-    JSlider slider;
-    JLabel label;
+    private ImagePanel imagePanel;
+    private JSlider slider;
+    private JLabel label;
 
     public SpeedSlider(ImagePanel imagePanel) {
         setLayout(new GridLayout(0, 1));
@@ -713,9 +697,9 @@ class SpeedSlider extends JPanel {
 
 class SizeSlider extends JPanel {
 
-    ImagePanel imagePanel;
-    JSlider slider;
-    JLabel label;
+    private ImagePanel imagePanel;
+    private JSlider slider;
+    private JLabel label;
 
     public SizeSlider(ImagePanel imagePanel) {
         setLayout(new GridLayout(0, 1));

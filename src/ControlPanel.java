@@ -5,10 +5,10 @@ import java.awt.event.*;
 public class ControlPanel extends JPanel {
 
     private ImagePanel imagePanel;
-    private boolean BFS, DFS, Dijkstra, A_star;
     private JButton startSearch, createMaze;
-    private JButton startBFS, startDFS, dijkstra, a_star;
+    private JButton selectBFS, selectDFS, selectDijkstra, selectA_star;
     private Color textColor = new Color(0, 0, 0, 250);
+    private boolean BFS, DFS, Dijkstra, A_star;
     private int x, y, curr_x, curr_y, width, height; 
 
     public ControlPanel(ImagePanel imagePanel) {
@@ -24,17 +24,17 @@ public class ControlPanel extends JPanel {
 
         JButton clearObstacles, clearPath;
 
-        startSearch = new JButton(" Start search");
+        startSearch = new JButton("Start search");
         startSearch.setForeground(  new Color(0, 175, 0, 255)  );
         startSearch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(startSearch.getText().equals(" Start search")) 
+                if(startSearch.getText().equals("Start search"))
                     runSearch();
-                else if (startSearch.getText().equals( " Pause")) 
+                else if (startSearch.getText().equals( "Pause"))
                     pauseSearch();
-                else if (startSearch.getText().equals( " Resume")) 
-                   resumeSearch();
+                else if (startSearch.getText().equals( "Resume"))
+                    resumeSearch();
             }
         });
 
@@ -52,45 +52,45 @@ public class ControlPanel extends JPanel {
         });
 
         JPanel algoPanel = new JPanel(new GridLayout(0, 2));
-        startBFS = new JButton("BFS");
-        startBFS.addActionListener(new ActionListener() {
+        selectBFS = new JButton("BFS");
+        selectBFS.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 selectBFS();
             }
         });
 
-        startDFS = new JButton("DFS");
-        startDFS.addActionListener(new ActionListener() {
+        selectDFS = new JButton("DFS");
+        selectDFS.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 selectDFS();
             }
         });
 
-        dijkstra = new JButton("Dijkstra");
-        dijkstra.addActionListener(new ActionListener() {
+        selectDijkstra = new JButton("Dijkstra");
+        selectDijkstra.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 selectDijkstra();
             }
         });
 
-        a_star = new JButton("A*");
-        a_star.addActionListener(new ActionListener() {
+        selectA_star = new JButton("A*");
+        selectA_star.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 selectAstar();
             }
         });
 
-        algoPanel.add(startBFS);
-        algoPanel.add(startDFS);
-        algoPanel.add(dijkstra);
-        algoPanel.add(a_star);
+        algoPanel.add(selectBFS);
+        algoPanel.add(selectDFS);
+        algoPanel.add(selectDijkstra);
+        algoPanel.add(selectA_star);
 
         JPanel clearPanel = new JPanel(new GridLayout(0, 2));
-        clearObstacles = new JButton(" Clear walls");
+        clearObstacles = new JButton("Clear walls");
         clearObstacles.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -98,7 +98,7 @@ public class ControlPanel extends JPanel {
             }
         });
 
-        clearPath = new JButton(" Clear path");
+        clearPath = new JButton("Clear path");
         clearPath.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -113,11 +113,11 @@ public class ControlPanel extends JPanel {
 
         algo_label.setFont(new Font("plain", Font.BOLD, 14));
         startSearch.setFont(new Font("plain", Font.BOLD, 13));
-        startDFS.setFont(new Font("plain", Font.BOLD, 13));
-        startBFS.setFont(new Font("plain", Font.BOLD, 13));
+        selectDFS.setFont(new Font("plain", Font.BOLD, 13));
+        selectBFS.setFont(new Font("plain", Font.BOLD, 13));
         startSearch.setFont(new Font("plain", Font.BOLD, 13));
-        dijkstra.setFont(new Font("plain", Font.BOLD, 13));
-        a_star.setFont(new Font("plain", Font.BOLD, 13));
+        selectDijkstra.setFont(new Font("plain", Font.BOLD, 13));
+        selectA_star.setFont(new Font("plain", Font.BOLD, 13));
         clearObstacles.setFont(new Font("plain", Font.BOLD, 13));
         clearPath.setFont(new Font("plain", Font.BOLD, 13));
         createMaze.setFont(new Font("plain", Font.BOLD, 13));
@@ -127,16 +127,16 @@ public class ControlPanel extends JPanel {
         clearObstacles.setForeground(textColor);
         clearPath.setForeground(textColor);
         createMaze.setForeground(textColor);
-        startDFS.setForeground(textColor);
-        startBFS.setForeground(textColor);
-        dijkstra.setForeground(textColor);
-        a_star.setForeground(textColor);
+        selectDFS.setForeground(textColor);
+        selectBFS.setForeground(textColor);
+        selectDijkstra.setForeground(textColor);
+        selectA_star.setForeground(textColor);
 
-        startDFS.setOpaque(false);
-        startBFS.setOpaque(false);
+        selectDFS.setOpaque(false);
+        selectBFS.setOpaque(false);
         startSearch.setOpaque(false);
-        dijkstra.setOpaque(false);
-        a_star.setOpaque(false);
+        selectDijkstra.setOpaque(false);
+        selectA_star.setOpaque(false);
         clearPanel.setOpaque(false);
         algoPanel.setOpaque(false);
 
@@ -178,23 +178,15 @@ public class ControlPanel extends JPanel {
         Dijkstra = false;
         A_star = false;
 
-        startBFS.setForeground(textColor);
-        startDFS.setForeground(textColor);
-        dijkstra.setForeground(textColor);
-        a_star.setForeground(textColor);
-    }
-
-    public void setSearchText(String s) {
-        startSearch.setText(s);
+        selectBFS.setForeground(textColor);
+        selectDFS.setForeground(textColor);
+        selectDijkstra.setForeground(textColor);
+        selectA_star.setForeground(textColor);
     }
 
     public void setSearchText(String s, Color c) {
         startSearch.setText(s);
         startSearch.setForeground(c);
-    }
-
-    public void setMazeText(String s) {        
-        createMaze.setText(s);
     }
 
     public void setMazeText(String s, Color c) {
@@ -203,20 +195,20 @@ public class ControlPanel extends JPanel {
     }
 
     public void runSearch() {
-        startSearch.setText( " Pause");
+        startSearch.setText( "Pause");
         startSearch.setForeground(  Color.RED  );
         imagePanel.setSearchState(true);
         doSearch();
     }
 
     public void pauseSearch() {
-        startSearch.setText( " Resume");
+        startSearch.setText( "Resume");
         startSearch.setForeground(  new Color(0, 175, 0, 255)  );
         imagePanel.setSearchState(false);
     }
 
     public void resumeSearch() {
-        startSearch.setText( " Pause");
+        startSearch.setText( "Pause");
         startSearch.setForeground(  Color.RED  );
         imagePanel.setSearchState(true);
     }
@@ -241,11 +233,11 @@ public class ControlPanel extends JPanel {
     }
 
     public void readyMaze() {
-        setMazeText("Create Maze", textColor );
+        setMazeText("Create Maze", textColor);
     }
 
     public void readySearch() {
-        setSearchText(" Start search", textColor );
+        setSearchText("Start search", textColor);
     }
 
     private void doSearch() {
@@ -267,25 +259,25 @@ public class ControlPanel extends JPanel {
     private void selectBFS() {
         clearAll();
         BFS = true;
-        startBFS.setForeground(  new Color(0, 175, 0, 255)  );  
+        selectBFS.setForeground(  new Color(0, 175, 0, 255)  );
     }
 
     private void selectDFS() {
         clearAll();
         DFS = true;
-        startDFS.setForeground(  new Color(0, 175, 0, 255)  );  
+        selectDFS.setForeground(  new Color(0, 175, 0, 255)  );
     }
 
     private void selectAstar() {
         clearAll();
         A_star = true;
-        a_star.setForeground(  new Color(0, 175, 0, 255)  );  
+        selectA_star.setForeground(  new Color(0, 175, 0, 255)  );
     }
 
     private void selectDijkstra() {
         clearAll();
         Dijkstra = true;
-        dijkstra.setForeground(  new Color(0, 175, 0, 255)  );  
+        selectDijkstra.setForeground(  new Color(0, 175, 0, 255)  );
     }
 
 }

@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 
 public class Main {
 
@@ -15,7 +16,9 @@ public class Main {
 
     private static void createAndShowGUI()
     {
-        JFrame frame = new DisplayFrame( WIDTH, HEIGHT);
+        JFrame frame = new JFrame();
+        frame.setSize(WIDTH, HEIGHT);
+        frame.add(new ImagePanel(WIDTH, HEIGHT), BorderLayout.CENTER);
         frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
         frame.setVisible( true );
     }

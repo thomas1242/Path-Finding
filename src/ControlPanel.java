@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -19,10 +21,7 @@ public class ControlPanel extends JPanel {
         height = (int)(imagePanel.getHeight() * .5);
         x = curr_x = (int)(imagePanel.getWidth() * (1 - .2));
         y = curr_y = (int)(imagePanel.getHeight() * .25);
-       
         setBounds(x, y, width, height  );
-
-        JButton clearObstacles, clearPath;
 
         startSearch = new JButton("Start search");
         startSearch.setForeground(  new Color(0, 175, 0, 255)  );
@@ -90,6 +89,8 @@ public class ControlPanel extends JPanel {
         algoPanel.add(selectA_star);
 
         JPanel clearPanel = new JPanel(new GridLayout(0, 2));
+        JButton clearObstacles, clearPath;
+
         clearObstacles = new JButton("Clear walls");
         clearObstacles.addActionListener(new ActionListener() {
             @Override
@@ -108,6 +109,29 @@ public class ControlPanel extends JPanel {
 
         clearPanel.add(clearObstacles);
         clearPanel.add(clearPath);
+
+        // animation speed slider
+        JPanel speedSlider = new JPanel();
+        speedSlider.setLayout(new GridLayout(0, 1));
+
+        JLabel label = new JLabel(" Speed");
+        label.setFont(new Font("plain", Font.BOLD, 14));
+        label.setForeground( new Color(0xffbbbbbb) );
+
+        JSlider slider = new JSlider(0, 50, 25);
+        slider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                imagePanel.setFrameDelay(slider.getValue());
+            }
+        });;
+        slider.setMinorTickSpacing(1);
+        slider.setPaintTicks(true);
+        slider.setSnapToTicks(true);
+        speedSlider.add(label, BorderLayout.CENTER);
+        speedSlider.add(slider, BorderLayout.SOUTH);
+        speedSlider.setOpaque(false);
+        speedSlider.setVisible(true);
 
         JLabel algo_label = new JLabel(" Algorithms");
 
@@ -143,7 +167,7 @@ public class ControlPanel extends JPanel {
         add(startSearch);
         add(algo_label);
         add(algoPanel);
-        add(new SpeedSlider(imagePanel));
+        add(speedSlider);
         add(new SizeSlider(imagePanel));
         add(clearPanel);
         add(createMaze);
@@ -282,3 +306,38 @@ public class ControlPanel extends JPanel {
 
 }
 
+class SizeSlider extends JPanel {
+
+    private JSlider slider;
+    private JLabel label;
+
+    public SizeSlider(ImagePanel imagePanel) {
+        setLayout(new GridLayout(0, 1));
+
+        label = new JLabel();
+        label.setFont(new Font("plain", Font.BOLD, 14));
+        label.setForeground( new Color(0xffbbbbbb) );
+
+        slider = new JSlider(2, 120, 60);
+        label.setText(" " + String.valueOf(imagePanel.getHeight() / slider.getValue() + 1) + " rows , " + String.valueOf(imagePanel.getWidth() / slider.getValue() + 1)  + " columns ");
+
+        slider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int size = slider.getValue();
+                label.setText(" " + String.valueOf(imagePanel.getHeight() / size + 1) + " rows , " + String.valueOf(imagePanel.getWidth() / size + 1)  + " columns ");
+                imagePanel.updateCellSize( size );
+            }
+        });;
+
+        slider.setMinorTickSpacing(3);
+        slider.setPaintTicks(true);
+        slider.setSnapToTicks(true);
+
+        add(label, BorderLayout.CENTER);
+        add(slider, BorderLayout.SOUTH);
+
+        setOpaque(false );
+        setVisible(true);
+    }
+}

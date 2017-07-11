@@ -1,5 +1,4 @@
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -661,76 +660,4 @@ public class ImagePanel extends JLayeredPane {
     }
 }
 
-class SpeedSlider extends JPanel {
-
-    private ImagePanel imagePanel;
-    private JSlider slider;
-    private JLabel label;
-
-    public SpeedSlider(ImagePanel imagePanel) {
-        setLayout(new GridLayout(0, 1));
-        this.imagePanel = imagePanel;
-
-        label = new JLabel(" Speed");
-        label.setFont(new Font("plain", Font.BOLD, 14));
-        label.setForeground( new Color(0xffbbbbbb) );
-
-        slider = new JSlider(0, 50, 25);
-        slider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                imagePanel.setFrameDelay(slider.getValue());
-            }
-        });;
-
-        slider.setMinorTickSpacing(1);
-        slider.setPaintTicks(true);
-        slider.setSnapToTicks(true);
-
-        add(label, BorderLayout.CENTER);
-        add(slider, BorderLayout.SOUTH);
-
-        setOpaque(false);
-        setVisible(true);
-    }
-}
-
-class SizeSlider extends JPanel {
-
-    private ImagePanel imagePanel;
-    private JSlider slider;
-    private JLabel label;
-
-    public SizeSlider(ImagePanel imagePanel) {
-        setLayout(new GridLayout(0, 1));
-        this.imagePanel = imagePanel;
-
-        label = new JLabel();
-        label.setFont(new Font("plain", Font.BOLD, 14));
-        label.setForeground( new Color(0xffbbbbbb) );
-
-
-        slider = new JSlider(2, 120, 60);
-        label.setText(" " + String.valueOf(imagePanel.getHeight() / slider.getValue() + 1) + " rows , " + String.valueOf(imagePanel.getWidth() / slider.getValue() + 1)  + " columns ");
-
-        slider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                int size = slider.getValue();
-                label.setText(" " + String.valueOf(imagePanel.getHeight() / size + 1) + " rows , " + String.valueOf(imagePanel.getWidth() / size + 1)  + " columns ");
-                imagePanel.updateCellSize( size );
-            }
-        });;
-
-        slider.setMinorTickSpacing(3);
-        slider.setPaintTicks(true);
-        slider.setSnapToTicks(true);
-
-      add(label, BorderLayout.CENTER);
-      add(slider, BorderLayout.SOUTH);
-
-      setOpaque(false );
-      setVisible(true);
-    }
-}
 

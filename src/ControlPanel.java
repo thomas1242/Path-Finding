@@ -241,7 +241,12 @@ public class ControlPanel extends JPanel {
         createMaze.setText( "Pause");
         createMaze.setForeground(  Color.RED  );
         imagePanel.setSearchState(true);
-        imagePanel.createMaze();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                 imagePanel.createMaze();
+            }
+        }).start();
     }
 
     public void pauseMaze() {
@@ -268,16 +273,21 @@ public class ControlPanel extends JPanel {
         imagePanel.clearPath();
         imagePanel.setSearchState(true);
 
-        if(BFS)
-            imagePanel.BFS();
-        else if (DFS)
-            imagePanel.DFS();
-        else if (A_star)
-            imagePanel.A_Star();
-        else if (Dijkstra)
-            imagePanel.Dijkstra();
-        else
-            readySearch();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(BFS)
+                    imagePanel.BFS();
+                else if (DFS)
+                    imagePanel.DFS();
+                else if (A_star)
+                    imagePanel.A_Star();
+                else if (Dijkstra)
+                    imagePanel.Dijkstra();
+                else
+                    readySearch();
+            }
+        }).start();
     }
 
     private void selectBFS() {

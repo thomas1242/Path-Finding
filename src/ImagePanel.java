@@ -370,9 +370,6 @@ public class ImagePanel extends JLayeredPane {
 
     public void Dijkstra() {
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
                 int d = 0;
 
                 LinkedList<Node> q = new LinkedList<Node>();
@@ -404,16 +401,10 @@ public class ImagePanel extends JLayeredPane {
                 }
 
                 drawPath(curr);
-            }
-        }).start();
         
     }
 
     public void A_Star() {
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
 
                     for (int i = 0; i < grid.length; i++ ) {
                         for (int j = 0; j < grid[0].length; j++ ) {
@@ -473,8 +464,6 @@ public class ImagePanel extends JLayeredPane {
                     }
 
                     drawPath(curr);
-         }
-        }).start();
     }
 
 
@@ -499,9 +488,6 @@ public class ImagePanel extends JLayeredPane {
 
     public void BFS() {
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
                 int d = 0;
 
                 LinkedList<Node> q = new LinkedList<Node>();
@@ -533,16 +519,11 @@ public class ImagePanel extends JLayeredPane {
                 }
 
                 drawPath(curr);
-            }
-        }).start();
     }
 
 
     public void DFS() {
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
                 int d = 0;
 
                 Stack<Node> stack = new Stack<Node>();
@@ -574,15 +555,9 @@ public class ImagePanel extends JLayeredPane {
                 }
 
                 drawPath(curr);
-            }
-        }).start();
     }
 
     public void createMaze() {
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
 
                 for (int i = 0; i < grid.length; i++ ) {
                     for (int j = 0; j < grid[0].length; j++ ) {
@@ -643,8 +618,6 @@ public class ImagePanel extends JLayeredPane {
                 }
 
                 controlPanel.readyMaze();
-            }
-        }).start();
     }
 
     public void setSearchState(boolean isRunning) {

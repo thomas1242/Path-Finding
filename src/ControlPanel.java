@@ -12,28 +12,30 @@ public class ControlPanel extends JPanel {
     private JButton startSearchButton, createMazeButton;
     private List<JButton> algorithmSelectButtons;
     private String selectedAlgorithm = "BFS";
-    private Color textColor = new Color(0, 0, 0, 250);
+    private Color defaultButtonTextColor = new Color(0, 0, 0, 250);
     private int x, y, curr_x, curr_y, width, height;
 
     public ControlPanel(ImagePanel imagePanel) {
         this.imagePanel = imagePanel;
-        setupLayout();
+        setInitialPosition();
         addComponents();
         addMouseListeners();
+        drawBackground(new Color(50, 50, 50, 200));
+        setVisible(true);
+        setOpaque(true);
     }
 
-    private void setupLayout() {
-        setLayout(new GridLayout(0, 1));
+    private void drawBackground(Color color) {
+        setBackground( color );
+        setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220,  32), 6));
+    }
+
+    private void setInitialPosition() {
         width = (int)(imagePanel.getWidth() * .175);
         height = (int)(imagePanel.getHeight() * .5);
         x = curr_x = (int)(imagePanel.getWidth() * (1 - .2));
         y = curr_y = (int)(imagePanel.getHeight() * .25);
         setBounds(x, y, width, height  );
-
-        setBackground(new Color(50, 50, 50, 200));
-        setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220,  32), 6));
-        setVisible(true);
-        setOpaque(true);
     }
 
     private void addComponents() {
@@ -46,6 +48,7 @@ public class ControlPanel extends JPanel {
         JPanel speedSliderPanel = createSpeedSliderPanel();
         JPanel sizeSliderPanel = createSizeSliderPanel();
 
+        setLayout(new GridLayout(0, 1));
         add(startSearchButton);
         add(algoLabel);
         add(algoButtonPanel);
@@ -70,7 +73,7 @@ public class ControlPanel extends JPanel {
             }
         });
         startSearch.setFont(new Font("plain", Font.BOLD, 13));
-        startSearch.setForeground(textColor);
+        startSearch.setForeground(defaultButtonTextColor);
         startSearch.setOpaque(false);
 
         return startSearch;
@@ -90,7 +93,7 @@ public class ControlPanel extends JPanel {
             }
         });
         createMaze.setFont(new Font("plain", Font.BOLD, 13));
-        createMaze.setForeground(textColor);
+        createMaze.setForeground(defaultButtonTextColor);
         createMaze.setOpaque(false);
         
         return createMaze;
@@ -98,6 +101,8 @@ public class ControlPanel extends JPanel {
     
     private JPanel createAlgorithmPanel() {
         JPanel algoPanel = new JPanel(new GridLayout(0, 2));
+        algoPanel.setOpaque(false);
+
         JButton selectBFS = new JButton("BFS");
         selectBFS.addActionListener(new ActionListener() {
             @Override
@@ -107,7 +112,6 @@ public class ControlPanel extends JPanel {
                 selectBFS.setForeground(  new Color(0, 175, 0, 255)  );
             }
         });
-
         JButton selectDFS = new JButton("DFS");
         selectDFS.addActionListener(new ActionListener() {
             @Override
@@ -117,7 +121,6 @@ public class ControlPanel extends JPanel {
                 selectDFS.setForeground(  new Color(0, 175, 0, 255)  );
             }
         });
-
         JButton selectDijkstra = new JButton("Dijkstra");
         selectDijkstra.addActionListener(new ActionListener() {
             @Override
@@ -127,7 +130,6 @@ public class ControlPanel extends JPanel {
                 selectDijkstra.setForeground(  new Color(0, 175, 0, 255)  );
             }
         });
-
         JButton selectA_star = new JButton("A*");
         selectA_star.addActionListener(new ActionListener() {
             @Override
@@ -143,10 +145,10 @@ public class ControlPanel extends JPanel {
         selectDijkstra.setFont(new Font("plain", Font.BOLD, 13));
         selectA_star.setFont(new Font("plain", Font.BOLD, 13));
         
-        selectDFS.setForeground(textColor);
-        selectBFS.setForeground(textColor);
-        selectDijkstra.setForeground(textColor);
-        selectA_star.setForeground(textColor);
+        selectDFS.setForeground(defaultButtonTextColor);
+        selectBFS.setForeground(defaultButtonTextColor);
+        selectDijkstra.setForeground(defaultButtonTextColor);
+        selectA_star.setForeground(defaultButtonTextColor);
         
         selectDFS.setOpaque(false);
         selectBFS.setOpaque(false);
@@ -162,7 +164,6 @@ public class ControlPanel extends JPanel {
         for(JButton button : algorithmSelectButtons)
             algoPanel.add(button);
 
-        algoPanel.setOpaque(false);
         return algoPanel;
     }
     
@@ -177,7 +178,6 @@ public class ControlPanel extends JPanel {
                 imagePanel.clearWalls();
             }
         });
-
         clearPath = new JButton("Clear path");
         clearPath.addActionListener(new ActionListener() {
             @Override
@@ -188,8 +188,8 @@ public class ControlPanel extends JPanel {
 
         clearObstacles.setFont(new Font("plain", Font.BOLD, 13));
         clearPath.setFont(new Font("plain", Font.BOLD, 13));
-        clearObstacles.setForeground(textColor);
-        clearPath.setForeground(textColor);
+        clearObstacles.setForeground(defaultButtonTextColor);
+        clearPath.setForeground(defaultButtonTextColor);
         clearPanel.setOpaque(false);
 
         clearPanel.add(clearObstacles);
@@ -285,7 +285,7 @@ public class ControlPanel extends JPanel {
 
     private void defaultTextColors() {
         for(JButton button : algorithmSelectButtons)
-            button.setForeground(textColor);
+            button.setForeground(defaultButtonTextColor);
     }
 
     public void setSearchText(String s, Color c) {
@@ -342,11 +342,11 @@ public class ControlPanel extends JPanel {
     }
 
     public void readyMaze() {
-        setMazeText("Create Maze", textColor);
+        setMazeText("Create Maze", defaultButtonTextColor);
     }
 
     public void readySearch() {
-        setSearchText("Start search", textColor);
+        setSearchText("Start search", defaultButtonTextColor);
     }
 
     private void doSearch() {

@@ -14,8 +14,7 @@ public class Main {
         } );
     }
 
-    private static void createAndShowGUI()
-    {
+    private static void createAndShowGUI() {
         JFrame frame = new JFrame();
         frame.setSize(WIDTH, HEIGHT);
         frame.add(new ImagePanel(WIDTH, HEIGHT), BorderLayout.CENTER);

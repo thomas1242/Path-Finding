@@ -2,6 +2,8 @@ import java.awt.*;
 
 public class Interpolation {
 
+    private Interpolation() {}
+
     public static Color[] getColors(int start, int end, int length) {
         Color[] colors = new Color[length];
 

@@ -4,7 +4,6 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
-
 public class ImagePanel extends JLayeredPane {
 
     // Image
@@ -12,8 +11,7 @@ public class ImagePanel extends JLayeredPane {
     private Graphics2D g2d = null;
 
     // Grid
-    private Node[][] grid;
-    private Node startPoint, endPoint;
+    private Grid grid;
     private int cellPixelWidth = 60;
 
     // Colors
@@ -40,33 +38,14 @@ public class ImagePanel extends JLayeredPane {
        
         createGrid();
         generateCellColors();
-        defaultStartEndLocs();
         addComponents();
         addListeners();
         drawAll();
     }
 
     private void createGrid() {
-        grid = new Node[image.getWidth()/ cellPixelWidth + 1][image.getHeight()/ cellPixelWidth + 1];
-
-        for (int i = 0; i < grid.length; i++)
-            for (int j = 0; j < grid[i].length; j++)
-                grid[i][j] = new Node(i, j);
-
-        connectNeighbors();
-    }
-
-    private void connectNeighbors() {	// O(n) where n is the number of nodes in the graph
-        for (int i = 0; i < grid.length; i++)
-            for (int j = 0; j < grid[i].length; j++)
-                for (int n = -1; n <= 1; n++)
-                    for (int m = -1; m <= 1; m++) {
-                        int x_step = i + n;
-                        int y_step = j + m;
-                        if (m == 0 || n == 0)
-                            if (!(i == x_step && j == y_step) && x_step < grid.length && x_step >= 0 && y_step < grid[i].length && y_step >= 0)
-                                grid[i][j].neighbors.add(grid[x_step][y_step]);
-                    }
+        grid = new Grid( cellPixelWidth, image.getWidth() );
+        grid.defaultStartEndLocs();
     }
 
     private void addComponents() {
@@ -74,37 +53,18 @@ public class ImagePanel extends JLayeredPane {
         add(controlPanel, new Integer(3));
     }
 
-    private void defaultStartEndLocs() {
-        setStartPoint((int)(grid.length * 0.3), (int)(grid[0].length * 0.5));
-        setEndPoint((int)(grid.length * 0.65), (int)(grid[0].length * 0.5));
-    }
-
-    private void setStartPoint(int x, int y) {
-        if( isValidLoc(x, y) && grid[x][y].isPassable )
-            startPoint = grid[x][y];
-    }
-
-    private void setEndPoint(int x, int y) {
-        if( isValidLoc(x, y) && grid[x][y].isPassable )
-            endPoint = grid[x][y];
-    }
-
     private void drawStartPoint() {
         g2d.setColor(start_color);
-        g2d.fillRect(startPoint.x * cellPixelWidth + 1, startPoint.y * cellPixelWidth + 1, cellPixelWidth - 1, cellPixelWidth - 1);
+        g2d.fillRect(grid.getStartPoint().x * cellPixelWidth + 1, grid.getStartPoint().y * cellPixelWidth + 1, cellPixelWidth - 1, cellPixelWidth - 1);
     }
 
     private void drawEndPoint() {
         g2d.setColor(end_color);
-        g2d.fillRect(endPoint.x * cellPixelWidth + 1, endPoint.y * cellPixelWidth + 1, cellPixelWidth - 1, cellPixelWidth - 1);
-    }
-
-    private boolean isValidLoc(int x, int y) {
-        return !( x >= grid.length || y >= grid[0].length || x < 0 || y < 0 );
+        g2d.fillRect(grid.getEndPoint().x * cellPixelWidth + 1, grid.getEndPoint().y * cellPixelWidth + 1, cellPixelWidth - 1, cellPixelWidth - 1);
     }
 
     private void generateCellColors() {
-        cellColors = Interpolation.getColors( 0xffcccccc, 0x0fFFD700, grid.length * grid[0].length);
+        cellColors = Interpolation.getColors( 0xffcccccc, 0x0fFFD700, grid.getNumberOfNodes());
     }
 
     private void drawAll() {
@@ -118,9 +78,11 @@ public class ImagePanel extends JLayeredPane {
         g2d.setColor(passable_color);
         g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
 
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                Node cell = grid[i][j];
+        Node[][] _grid = grid.getGrid();
+
+        for (int i = 0; i < _grid.length; i++) {
+            for (int j = 0; j < _grid[i].length; j++) {
+                Node cell = _grid[i][j];
                 if (!cell.isPassable)
                     drawCell(cell, impassable_color, 0);
                 else if (cell.isVisited)
@@ -144,7 +106,7 @@ public class ImagePanel extends JLayeredPane {
 
     private void drawCell(Node cell, Color color, int delay) {
 
-        if(startPoint.equals(cell) || endPoint.equals(cell))
+        if(grid.isStartPoint(cell) || grid.isEndPoint(cell))
             return;
 
         int x = cell.x * cellPixelWidth + 1;
@@ -161,18 +123,6 @@ public class ImagePanel extends JLayeredPane {
     
     }
 
-    private void drawPathLineBetweenTwoCells(Node n1, Node n2) {
-        int x1 = n1.x * cellPixelWidth + cellPixelWidth / 2 + 1;
-        int y1 = n1.y * cellPixelWidth + cellPixelWidth / 2 + 1;
-        int x2 = n2.x * cellPixelWidth + cellPixelWidth / 2 + 1;
-        int y2 = n2.y * cellPixelWidth + cellPixelWidth / 2 + 1;
-
-        g2d.setStroke( new BasicStroke( (float)(cellPixelWidth * .1),  BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND ) );
-        g2d.setColor(path_line_color);
-        g2d.drawLine(x1, y1, x2, y2);
-        repaint();
-    }
-
     private void drawPath(Node curr) {
         Color[] colors = Interpolation.getColors( 0xff00ff00, 0xffff0000, getPathLength(curr) );
         int n = colors.length;
@@ -182,7 +132,7 @@ public class ImagePanel extends JLayeredPane {
         while(curr.parent != null) {
             while(paused()) {}
             drawCell(curr, colors[--n], frameDelay_ms);
-            drawPathLineBetweenTwoCells(prev, curr);
+//            drawPathLineBetweenTwoCells(prev, curr);
             try {
                 Thread.sleep((int)(frameDelay_ms * 2.5));
             } catch (InterruptedException e) {
@@ -192,10 +142,22 @@ public class ImagePanel extends JLayeredPane {
             curr = curr.parent;
         }
 
-        drawPathLineBetweenTwoCells(prev, curr);
+//        drawPathLineBetweenTwoCells(prev, curr);
         controlPanel.readySearch();
         isRunning = false;
     }
+
+//        private void drawPathLineBetweenTwoCells(Node n1, Node n2) {
+//        int x1 = n1.x * cellPixelWidth + cellPixelWidth / 2 + 1;
+//        int y1 = n1.y * cellPixelWidth + cellPixelWidth / 2 + 1;
+//        int x2 = n2.x * cellPixelWidth + cellPixelWidth / 2 + 1;
+//        int y2 = n2.y * cellPixelWidth + cellPixelWidth / 2 + 1;
+//
+//        g2d.setStroke( new BasicStroke( (float)(cellPixelWidth * .1),  BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND ) );
+//        g2d.setColor(path_line_color);
+//        g2d.drawLine(x1, y1, x2, y2);
+//        repaint();
+//    }
 
     private int getPathLength(Node node) {
         int n = 0;
@@ -214,16 +176,16 @@ public class ImagePanel extends JLayeredPane {
                 int x = (int)point.getX() / cellPixelWidth;
                 int y = (int)point.getY() / cellPixelWidth;
 
-                if( !isValidLoc(x, y) )
+                if( !grid.isValidLoc(x, y) )
                     return;
 
-                if(startPoint.x == x && startPoint.y == y)
+                if( grid.isStartPoint(x, y) )
                     draggingStart = true;
-                else if(endPoint.x == x && endPoint.y == y)
+                else if( grid.isEndPoint(x, y) )
                     draggingEnd = true;
-                else if (grid[ x ][ y ].isPassable)
+                else if ( grid.isPassable(x, y) )
                     drawingWalls = true;
-                else if (!grid[ x ][ y ].isPassable)
+                else if ( !grid.isPassable(x, y) )
                     erasingWalls = true;
             }
             @Override
@@ -252,21 +214,21 @@ public class ImagePanel extends JLayeredPane {
                 int x = (int) point.getX() / cellPixelWidth;
                 int y = (int) point.getY() / cellPixelWidth;
 
-                if( !isValidLoc(x, y) )
+                if( !grid.isValidLoc(x, y) )
                     return;
 
-                Node newLoc = grid[x][y];
-                if( endPoint.equals(newLoc) || startPoint.equals(newLoc))   // do nothing
+                Node newLoc = grid.nodeAt(x, y);
+                if( grid.isEndPoint(newLoc) || grid.isStartPoint(newLoc) )   // do nothing
                     return;
 
                 if(draggingStart)
-                    setStartPoint(x, y);
+                    grid.setStartPoint(x, y);
                 else if (draggingEnd)
-                    setEndPoint(x, y);
-                else if (drawingWalls && grid[ x ][ y ].isPassable)
-                    grid[ x ][ y ].isPassable = false;
-                else if (erasingWalls && !grid[ x ][ y ].isPassable)
-                    grid[ x ][ y ].isPassable = true;
+                    grid.setEndPoint(x, y);
+                else if (drawingWalls && grid.isPassable(x, y))
+                    grid.makeNodeUnpassable(x, y);
+                else if (erasingWalls && !grid.isPassable(x, y))
+                    grid.makeNodePassable(x, y);
 
                 drawAll();
             }
@@ -281,24 +243,16 @@ public class ImagePanel extends JLayeredPane {
         cellPixelWidth = size;
         createGrid();
         generateCellColors();
-        defaultStartEndLocs();
         drawAll();
     }
 
     public void clearWalls() {
-        for (int i = 0; i < grid.length; i++)
-            for (int j = 0; j < grid[i].length; j++) 
-                grid[i][j].isPassable = true;
+        grid.clearWalls();
         drawAll();
     }
 
     public void clearPath() {
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                grid[i][j].isVisited = false;
-                grid[i][j].isQueued = false;
-            }
-        }
+        grid.clearPath();
         drawAll();
     }
 
@@ -316,6 +270,8 @@ public class ImagePanel extends JLayeredPane {
         int distanceFromStart = 0;
 
         Queue<Node> q = new LinkedList<Node>();
+        Node startPoint = grid.getStartPoint();
+        Node endPoint = grid.getEndPoint();
         q.add( startPoint );
         Node curr = null;
 
@@ -344,19 +300,14 @@ public class ImagePanel extends JLayeredPane {
     }
 
     public void A_Star() {
-        for (int i = 0; i < grid.length; i++ ) {
-            for (int j = 0; j < grid[0].length; j++ ) {
-                if( !(grid[i][j].equals(startPoint) || grid[i][j].equals(endPoint)) ) {
-                    grid[i][j].g = Double.MAX_VALUE;
-                    grid[i][j].f = Double.MAX_VALUE;
-                }
-            }
-        }
+        grid.AstarReset();
 
         int distanceFromStart = 0;
         LinkedList<Node> openSet = new LinkedList<Node>();
         LinkedList<Node> closedSet = new LinkedList<Node>();
 
+        Node startPoint = grid.getStartPoint();
+        Node endPoint = grid.getEndPoint();
         openSet.add( startPoint );
         startPoint.f = distance_between(startPoint, endPoint);
 
@@ -419,6 +370,8 @@ public class ImagePanel extends JLayeredPane {
     public void BFS() {
         int distanceFromStart = 0;
 
+        Node startPoint = grid.getStartPoint();
+        Node endPoint = grid.getEndPoint();
         Queue<Node> q = new LinkedList<Node>();
         q.add( startPoint );
 
@@ -451,6 +404,8 @@ public class ImagePanel extends JLayeredPane {
     public void DFS() {
         int distanceFromStart = 0;
 
+        Node startPoint = grid.getStartPoint();
+        Node endPoint = grid.getEndPoint();
         Stack<Node> stack = new Stack<Node>();
         stack.push( startPoint );
 
@@ -480,14 +435,7 @@ public class ImagePanel extends JLayeredPane {
     }
 
     public void createMaze() {
-        for (int i = 0; i < grid.length; i++ ) {
-            for (int j = 0; j < grid[0].length; j++ ) {
-                if( !(grid[i][j].equals(startPoint) || grid[i][j].equals(endPoint)) ) {
-                    grid[i][j].isPassable = false;
-                    grid[i][j].isVisited = false;
-                }
-            }
-        }
+        grid.MazeReset();
         g2d.setColor( impassable_color );
         g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
 
@@ -496,10 +444,10 @@ public class ImagePanel extends JLayeredPane {
         repaint();
 
         int distanceFromStart = 0;
-        boolean[][] vis = new boolean[grid.length][grid[0].length];
+        boolean[][] vis = new boolean[grid.numRows()][grid.numCols()];
 
         Stack<Node> stack = new Stack<Node>();
-        Node center = grid[grid.length/2][grid[0].length/2];
+        Node center = grid.getCenterNode();
         stack.add(center);
         Node curr = center;
 

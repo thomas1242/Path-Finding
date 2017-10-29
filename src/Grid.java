@@ -2,6 +2,8 @@ public class Grid  {
 
     private Node[][] grid;
     private Node startPoint, endPoint;
+
+    // TODO: remove this stuff and call createGrid(numRows, numCols)
     private int cellPixelWidth = 60;
     private int imageWidthInPixels;
 

@@ -44,7 +44,9 @@ public class ImagePanel extends JLayeredPane {
     }
 
     private void createGrid() {
-        grid = new Grid( image.getWidth() / cellPixelWidth + 1, image.getWidth() / cellPixelWidth + 1 );
+        int numRows = image.getWidth() / cellPixelWidth + 1;
+        int numCols = image.getHeight() / cellPixelWidth + 1;
+        grid = new Grid( numRows, numCols );
         grid.defaultStartEndLocs();
     }
 

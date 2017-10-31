@@ -29,8 +29,8 @@ public class Grid  {
     }
 
     public void defaultStartEndLocs() {
-        setStartPoint((int)(grid.length * 0.3), (int)(grid[0].length * 0.3));
-        setEndPoint((int)(grid.length * 0.65), (int)(grid[0].length * 0.3));
+        setStartPoint((int)(grid.length * 0.3), (int)(grid[0].length * 0.5));
+        setEndPoint((int)(grid.length * 0.65), (int)(grid[0].length * 0.5));
     }
 
     public void createGrid(int numRows, int numCols) {

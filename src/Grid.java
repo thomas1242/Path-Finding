@@ -3,19 +3,8 @@ public class Grid  {
     private Node[][] grid;
     private Node startPoint, endPoint;
 
-    // TODO: remove this stuff and call createGrid(numRows, numCols)
-    private int cellPixelWidth = 60;
-    private int imageWidthInPixels;
-
-    public Grid(int cellPixelWidth, int imageWidthInPixels) {
-        this.cellPixelWidth = cellPixelWidth;
-        this.imageWidthInPixels = imageWidthInPixels;
-        createGrid();
-    }
-
-    public void defaultStartEndLocs() {
-        setStartPoint((int)(grid.length * 0.3), (int)(grid[0].length * 0.3));
-        setEndPoint((int)(grid.length * 0.65), (int)(grid[0].length * 0.3));
+    public Grid(int numRows, int numCols) {
+        createGrid(numRows, numCols);
     }
 
     public boolean isValidLoc(int x, int y) {
@@ -34,12 +23,18 @@ public class Grid  {
     public Node getStartPoint() {
         return startPoint;
     }
+
     public Node getEndPoint() {
         return endPoint;
     }
 
-    public void createGrid() {
-        grid = new Node[imageWidthInPixels/ cellPixelWidth + 1][imageWidthInPixels/ cellPixelWidth + 1];
+    public void defaultStartEndLocs() {
+        setStartPoint((int)(grid.length * 0.3), (int)(grid[0].length * 0.3));
+        setEndPoint((int)(grid.length * 0.65), (int)(grid[0].length * 0.3));
+    }
+
+    public void createGrid(int numRows, int numCols) {
+        grid = new Node[numRows][numCols];
 
         for (int i = 0; i < grid.length; i++)
             for (int j = 0; j < grid[i].length; j++)

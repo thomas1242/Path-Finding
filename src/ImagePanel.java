@@ -1,8 +1,8 @@
+import java.util.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.util.*;
 
 public class ImagePanel extends JLayeredPane {
 
@@ -47,7 +47,6 @@ public class ImagePanel extends JLayeredPane {
         int numRows = image.getWidth() / cellPixelWidth + 1;
         int numCols = image.getHeight() / cellPixelWidth + 1;
         grid = new Grid( numRows, numCols );
-        grid.defaultStartEndLocs();
     }
 
     private void addComponents() {
@@ -79,7 +78,6 @@ public class ImagePanel extends JLayeredPane {
     private void drawGrid() {
         g2d.setColor(passable_color);
         g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
-
         Node[][] _grid = grid.getGrid();
 
         for (int i = 0; i < _grid.length; i++) {
@@ -100,11 +98,16 @@ public class ImagePanel extends JLayeredPane {
     private void drawGridLines() {
         g2d.setStroke( new BasicStroke( 1.0f,  BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND ) );
         g2d.setColor(grid_line_color);
-        for (int i = 0; i < image.getHeight(); i += cellPixelWidth)
-            g2d.drawLine(0, i, image.getWidth(), i );
-        for (int i = 0; i < image.getWidth(); i += cellPixelWidth)
-            g2d.drawLine(i, 0, i, image.getHeight() );
+
+        int imgWidth = image.getWidth();
+        int imgHeight = image.getHeight();
+
+        for (int i = 0; i < imgHeight; i += cellPixelWidth)   
+            g2d.drawLine(0, i, imgWidth, i);
+        for (int i = 0; i < imgWidth;  i += cellPixelWidth)   
+            g2d.drawLine(i, 0, i, imgHeight);
     }
+
 
     private void drawCell(Node cell, Color color, int delay) {
 
@@ -220,7 +223,7 @@ public class ImagePanel extends JLayeredPane {
                     return;
 
                 Node newLoc = grid.nodeAt(x, y);
-                if( grid.isEndPoint(newLoc) || grid.isStartPoint(newLoc) )   // do nothing
+                if( grid.isEndPoint(newLoc) || grid.isStartPoint(newLoc) )  
                     return;
 
                 if(draggingStart)
@@ -237,9 +240,6 @@ public class ImagePanel extends JLayeredPane {
             public void mouseMoved(MouseEvent event) {}
         });
     }
-
-
-    // public API
 
     public void updateCellSize(int size) {
         cellPixelWidth = size;

@@ -5,6 +5,30 @@ public class Grid  {
 
     public Grid(int numRows, int numCols) {
         createGrid(numRows, numCols);
+        defaultStartEndLocs();
+    }
+
+    public void createGrid(int numRows, int numCols) {
+        grid = new Node[numRows][numCols];
+
+        for (int i = 0; i < grid.length; i++)
+            for (int j = 0; j < grid[i].length; j++)
+                grid[i][j] = new Node(i, j);
+
+        connectNeighbors();
+    }
+
+    private void connectNeighbors() {   // O(n) where n is the number of nodes in grid
+        for (int i = 0; i < grid.length; i++)
+            for (int j = 0; j < grid[i].length; j++)
+                for (int n = -1; n <= 1; n++)
+                    for (int m = -1; m <= 1; m++) {
+                        int x_step = i + n;
+                        int y_step = j + m;
+                        if (m == 0 || n == 0)
+                            if ( !(i == x_step && j == y_step) && isValidLoc(x_step, y_step) )
+                                grid[i][j].neighbors.add(grid[x_step][y_step]);
+                    }
     }
 
     public boolean isValidLoc(int x, int y) {
@@ -31,29 +55,6 @@ public class Grid  {
     public void defaultStartEndLocs() {
         setStartPoint((int)(grid.length * 0.3), (int)(grid[0].length * 0.5));
         setEndPoint((int)(grid.length * 0.65), (int)(grid[0].length * 0.5));
-    }
-
-    public void createGrid(int numRows, int numCols) {
-        grid = new Node[numRows][numCols];
-
-        for (int i = 0; i < grid.length; i++)
-            for (int j = 0; j < grid[i].length; j++)
-                grid[i][j] = new Node(i, j);
-
-        connectNeighbors();
-    }
-
-    private void connectNeighbors() {	// O(n) where n is the number of nodes in the graph
-        for (int i = 0; i < grid.length; i++)
-            for (int j = 0; j < grid[i].length; j++)
-                for (int n = -1; n <= 1; n++)
-                    for (int m = -1; m <= 1; m++) {
-                        int x_step = i + n;
-                        int y_step = j + m;
-                        if (m == 0 || n == 0)
-                            if (!(i == x_step && j == y_step) && x_step < grid.length && x_step >= 0 && y_step < grid[i].length && y_step >= 0)
-                                grid[i][j].neighbors.add(grid[x_step][y_step]);
-                    }
     }
 
     public int getNumberOfNodes() {
@@ -104,7 +105,7 @@ public class Grid  {
     }
 
     public Node getCenterNode() {
-        return grid[grid.length/2][grid[0].length/2];
+        return grid[ grid.length / 2 ][ grid[0].length / 2 ];
     }
 
     public void AstarReset() {

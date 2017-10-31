@@ -4,6 +4,10 @@ public class Interpolation {
 
     private Interpolation() {}
 
+    public static Color[] getColors(Color start, Color end, int length) {
+        return getColors(start.getRGB(), end.getRGB(), length);
+    }
+
     public static Color[] getColors(int start, int end, int length) {
         Color[] colors = new Color[length];
 
@@ -11,11 +15,11 @@ public class Interpolation {
         double value_G = (start >> 8 ) & 0xFF;
         double value_B = (start      ) & 0xFF;
 
-        double[] deltas = getDeltas( start, end, colors.length - 1 );
+        // fill 1D array with interpolated Colors
         colors[0] = new Color(start);
         colors[colors.length - 1] = new Color(end);
+        double[] deltas = getDeltas( start, end, colors.length - 1 );
 
-        // fill 1D array with interpolated Colors
         for (int i = 1; i < colors.length - 1; i++) {
             value_R += deltas[0];
             value_G += deltas[1];
@@ -40,7 +44,7 @@ public class Interpolation {
         start_G = (start >> 8 ) & 0xFF;
         start_B = (start      ) & 0xFF;
 
-        delta_R = (end_R - start_R) / n;        // color channel change per step
+        delta_R = (end_R - start_R) / n;      
         delta_G = (end_G - start_G) / n;
         delta_B = (end_B - start_B) / n;
 

@@ -33,7 +33,7 @@ public class ControlPanel extends JPanel {
     private void setInitialPosition() {
         width = (int)(imagePanel.getWidth() * .175);
         height = (int)(imagePanel.getHeight() * .5);
-        x = curr_x = (int)(imagePanel.getWidth() * (1 - .2));
+        x = curr_x = (int)(imagePanel.getWidth() * 0.8);
         y = curr_y = (int)(imagePanel.getHeight() * .25);
         setBounds(x, y, width, height  );
     }
@@ -66,9 +66,9 @@ public class ControlPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if(startSearch.getText().equals("Start search"))
                     runSearch();
-                else if (startSearch.getText().equals( "Pause"))
+                else if (startSearch.getText().equals("Pause"))
                     pauseSearch();
-                else if (startSearch.getText().equals( "Resume"))
+                else if (startSearch.getText().equals("Resume"))
                     resumeSearch();
             }
         });
@@ -86,9 +86,9 @@ public class ControlPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if(createMaze.getText().equals("Create Maze"))
                     createMaze();
-                else if (createMaze.getText().equals( "Pause"))
+                else if (createMaze.getText().equals("Pause"))
                     pauseMaze();
-                else if (createMaze.getText().equals( "Resume"))
+                else if (createMaze.getText().equals("Resume"))
                     resumeMaze();
             }
         });
@@ -140,29 +140,18 @@ public class ControlPanel extends JPanel {
             }
         });
 
-        selectDFS.setFont(new Font("plain", Font.BOLD, 13));
-        selectBFS.setFont(new Font("plain", Font.BOLD, 13));
-        selectDijkstra.setFont(new Font("plain", Font.BOLD, 13));
-        selectA_star.setFont(new Font("plain", Font.BOLD, 13));
-        
-        selectDFS.setForeground(defaultButtonTextColor);
-        selectBFS.setForeground(defaultButtonTextColor);
-        selectDijkstra.setForeground(defaultButtonTextColor);
-        selectA_star.setForeground(defaultButtonTextColor);
-        
-        selectDFS.setOpaque(false);
-        selectBFS.setOpaque(false);
-        selectDijkstra.setOpaque(false);
-        selectA_star.setOpaque(false);
-
         algorithmSelectButtons = new LinkedList<>();
         algorithmSelectButtons.add(selectBFS);
         algorithmSelectButtons.add(selectDFS);
         algorithmSelectButtons.add(selectDijkstra);
         algorithmSelectButtons.add(selectA_star);
 
-        for(JButton button : algorithmSelectButtons)
+        for(JButton button : algorithmSelectButtons) {
+            button.setFont(new Font("plain", Font.BOLD, 13));
+            button.setForeground(defaultButtonTextColor);
+            button.setOpaque(false);
             algoPanel.add(button);
+        }
 
         return algoPanel;
     }
@@ -190,10 +179,10 @@ public class ControlPanel extends JPanel {
         clearPath.setFont(new Font("plain", Font.BOLD, 13));
         clearObstacles.setForeground(defaultButtonTextColor);
         clearPath.setForeground(defaultButtonTextColor);
-        clearPanel.setOpaque(false);
 
         clearPanel.add(clearObstacles);
         clearPanel.add(clearPath);
+        clearPanel.setOpaque(false);
 
         return clearPanel;
     }
@@ -233,14 +222,19 @@ public class ControlPanel extends JPanel {
         label.setForeground( new Color(0xffbbbbbb) );
 
         JSlider slider = new JSlider(2, 120, 60);
-        label.setText(" " + String.valueOf(imagePanel.getHeight() / slider.getValue() + 1) + " rows , " + String.valueOf(imagePanel.getWidth() / slider.getValue() + 1)  + " columns ");
+
+        String numRows = String.valueOf(imagePanel.getHeight() / slider.getValue() + 1);
+        String numCols = String.valueOf(imagePanel.getWidth() / slider.getValue() + 1);
+        label.setText(" " + numRows + " rows , " + numCols  + " columns ");
 
         slider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 int size = slider.getValue();
-                label.setText(" " + String.valueOf(imagePanel.getHeight() / size + 1) + " rows , " + String.valueOf(imagePanel.getWidth() / size + 1)  + " columns ");
                 imagePanel.updateCellSize( size );
+                int numRows = imagePanel.getHeight() / size + 1;
+                int numCols = imagePanel.getWidth() / size + 1;
+                label.setText(" " + numRows + " rows , " + numCols  + " columns ");
             }
         });;
 

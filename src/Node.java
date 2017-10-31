@@ -1,8 +1,8 @@
-import java.util.LinkedList;
 import java.util.List;
+import java.util.LinkedList;
 
 class Node {
-
+    
     Node parent;
     List<Node> neighbors;
     boolean isPassable, isVisited, isQueued;

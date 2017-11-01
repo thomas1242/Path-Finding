@@ -130,39 +130,20 @@ public class ImagePanel extends JLayeredPane {
 
     private void drawPath(Node curr) {
         Color[] colors = Interpolation.getColors( 0xff00ff00, 0xffff0000, getPathLength(curr) );
-        int n = colors.length;
+        int index = colors.length;
 
         Node prev = curr;
         curr = curr.parent;
         while(curr.parent != null) {
             while(paused()) {}
-            drawCell(curr, colors[--n], frameDelay_ms);
-//            drawPathLineBetweenTwoCells(prev, curr);
-            try {
-                Thread.sleep((int)(frameDelay_ms * 2.5));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            drawCell(curr, colors[--index], frameDelay_ms * 5);
             prev = curr;
             curr = curr.parent;
         }
 
-//        drawPathLineBetweenTwoCells(prev, curr);
         controlPanel.readySearch();
         isRunning = false;
     }
-
-//        private void drawPathLineBetweenTwoCells(Node n1, Node n2) {
-//        int x1 = n1.x * cellPixelWidth + cellPixelWidth / 2 + 1;
-//        int y1 = n1.y * cellPixelWidth + cellPixelWidth / 2 + 1;
-//        int x2 = n2.x * cellPixelWidth + cellPixelWidth / 2 + 1;
-//        int y2 = n2.y * cellPixelWidth + cellPixelWidth / 2 + 1;
-//
-//        g2d.setStroke( new BasicStroke( (float)(cellPixelWidth * .1),  BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND ) );
-//        g2d.setColor(path_line_color);
-//        g2d.drawLine(x1, y1, x2, y2);
-//        repaint();
-//    }
 
     private int getPathLength(Node node) {
         int n = 0;

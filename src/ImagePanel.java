@@ -131,12 +131,10 @@ public class ImagePanel extends JLayeredPane {
         Color[] colors = Interpolation.getColors( 0xff00ff00, 0xffff0000, getPathLength(curr) );
         int index = colors.length;
 
-        Node prev = curr;
         curr = curr.parent;
         while(curr.parent != null) {
             while(paused()) {}
             drawCell(curr, colors[--index], frameDelay_ms * 5);
-            prev = curr;
             curr = curr.parent;
         }
 

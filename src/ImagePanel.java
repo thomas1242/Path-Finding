@@ -27,7 +27,7 @@ public class ImagePanel extends JLayeredPane {
     private ControlPanel controlPanel;
     private boolean draggingStart = false, draggingEnd  = false;
     private boolean drawingWalls  = false, erasingWalls = false;
-    private static boolean isRunning = false;
+    private boolean isRunning = false;
     private int frameDelay_ms = 25;
 
     public ImagePanel(int width, int height) {
@@ -127,15 +127,14 @@ public class ImagePanel extends JLayeredPane {
     
     }
 
-    private void drawPath(Node curr) {
-        Color[] colors = Interpolation.getColors( 0xff00ff00, 0xffff0000, getPathLength(curr) );
-        int index = colors.length;
+    private void drawPath(Node node) {
+        Color[] pathColors = Interpolation.getColors( Color.GREEN, Color.RED, getPathLength(node) );
+        int index = pathColors.length;
 
-        curr = curr.parent;
-        while(curr.parent != null) {
-            while(paused()) {}
-            drawCell(curr, colors[--index], frameDelay_ms * 5);
-            curr = curr.parent;
+        while(node.parent != null) {
+            while(paused());
+            node = node.parent;
+            drawCell(node, pathColors[--index], frameDelay_ms * 5);
         }
 
         controlPanel.readySearch();

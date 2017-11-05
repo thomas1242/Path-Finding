@@ -18,7 +18,7 @@ public class Grid  {
         connectNeighbors();
     }
 
-    private void connectNeighbors() {   // O(n) where n is the number of nodes in grid
+    private void connectNeighbors() {
         for (int i = 0; i < grid.length; i++)
             for (int j = 0; j < grid[i].length; j++)
                 for (int n = -1; n <= 1; n++)

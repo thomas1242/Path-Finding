@@ -243,7 +243,7 @@ public class ImagePanel extends JLayeredPane {
         Node curr = null;
 
         while( !q.isEmpty() ) {
-            while( paused() ) {}
+            while( paused() );
 
             curr = q.poll();
             curr.isVisited = true;
@@ -317,7 +317,6 @@ public class ImagePanel extends JLayeredPane {
         drawPath(curr);
     }
 
-
     private double distance_between(Node a, Node b) {
         return Math.sqrt( Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2) );
     }
@@ -344,7 +343,7 @@ public class ImagePanel extends JLayeredPane {
 
         Node curr = null;
         while( !q.isEmpty() ) {
-            while( paused() ) {}
+            while( paused() );
 
             curr = q.poll();
             curr.isVisited = true;
@@ -367,7 +366,6 @@ public class ImagePanel extends JLayeredPane {
         drawPath(curr);
     }
 
-
     public void DFS() {
         int distanceFromStart = 0;
 
@@ -378,7 +376,7 @@ public class ImagePanel extends JLayeredPane {
 
         Node curr = null;
         while( !stack.isEmpty() ) {
-            while( paused() ) {}
+            while( paused() );
 
             curr = stack.pop();
             curr.isVisited = true;
@@ -413,7 +411,7 @@ public class ImagePanel extends JLayeredPane {
         int distanceFromStart = 0;
         boolean[][] vis = new boolean[grid.numRows()][grid.numCols()];
 
-        Stack<Node> stack = new Stack<Node>();
+        Stack<Node> stack = new Stack<>();
         Node center = grid.getCenterNode();
         stack.add(center);
         Node curr = center;
@@ -421,7 +419,7 @@ public class ImagePanel extends JLayeredPane {
         Random rand = new Random();
 
         while( !stack.isEmpty() ) {
-            while(paused()) {}
+            while(paused());
 
             boolean flag = false;
             int rand_neighbor = rand.nextInt(curr.neighbors.size());

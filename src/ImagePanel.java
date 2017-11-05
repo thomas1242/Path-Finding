@@ -161,25 +161,17 @@ public class ImagePanel extends JLayeredPane {
                 if( !grid.isValidLoc(x, y) )
                     return;
 
-                if( grid.isStartPoint(x, y) )
-                    draggingStart = true;
-                else if( grid.isEndPoint(x, y) )
-                    draggingEnd = true;
-                else if ( grid.isPassable(x, y) )
-                    drawingWalls = true;
-                else if ( !grid.isPassable(x, y) )
-                    erasingWalls = true;
+                if ( grid.isStartPoint(x, y) )       draggingStart = true;
+                else if ( grid.isEndPoint(x, y) )    draggingEnd = true;
+                else if ( grid.isPassable(x, y) )    drawingWalls = true;
+                else if ( !grid.isPassable(x, y) )   erasingWalls = true;
             }
             @Override
             public void mouseReleased(MouseEvent e) {
-                if(draggingStart)
-                    draggingStart = false;
-                else if(draggingEnd)
-                    draggingEnd = false;
-                else if (drawingWalls)
-                    drawingWalls = false;
-                else if (erasingWalls)
-                    erasingWalls = false;
+                if (draggingStart)       draggingStart = false;
+                else if(draggingEnd)     draggingEnd = false;
+                else if (drawingWalls)   drawingWalls = false;
+                else if (erasingWalls)   erasingWalls = false;
             }
             @Override
             public void mouseClicked(MouseEvent e) {}
@@ -203,14 +195,10 @@ public class ImagePanel extends JLayeredPane {
                 if( grid.isEndPoint(newLoc) || grid.isStartPoint(newLoc) )  
                     return;
 
-                if(draggingStart)
-                    grid.setStartPoint(x, y);
-                else if (draggingEnd)
-                    grid.setEndPoint(x, y);
-                else if (drawingWalls && grid.isPassable(x, y))
-                    grid.makeNodeUnpassable(x, y);
-                else if (erasingWalls && !grid.isPassable(x, y))
-                    grid.makeNodePassable(x, y);
+                if(draggingStart)                                   grid.setStartPoint(x, y);
+                else if (draggingEnd)                               grid.setEndPoint(x, y);
+                else if (drawingWalls && grid.isPassable(x, y))     grid.makeNodeUnpassable(x, y);
+                else if (erasingWalls && !grid.isPassable(x, y))    grid.makeNodePassable(x, y);
 
                 drawAll();
             }

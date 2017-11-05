@@ -1,6 +1,4 @@
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
@@ -35,7 +33,7 @@ public class ControlPanel extends JPanel {
         height = (int)(imagePanel.getHeight() * .5);
         x = curr_x = (int)(imagePanel.getWidth() * 0.8);
         y = curr_y = (int)(imagePanel.getHeight() * .25);
-        setBounds(x, y, width, height  );
+        setBounds(x, y, width, height);
     }
 
     private void addComponents() {
@@ -61,17 +59,16 @@ public class ControlPanel extends JPanel {
     private JButton createStartSearchButton() {
         JButton startSearch = new JButton("Start search");
         startSearch.setForeground(  new Color(0, 175, 0, 255)  );
-        startSearch.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(startSearch.getText().equals("Start search"))
-                    runSearch();
-                else if (startSearch.getText().equals("Pause"))
-                    pauseSearch();
-                else if (startSearch.getText().equals("Resume"))
-                    resumeSearch();
-            }
-        });
+        startSearch.addActionListener(
+                event -> {
+                    if (startSearch.getText().equals("Start search"))
+                        runSearch();
+                    else if (startSearch.getText().equals("Pause"))
+                        pauseSearch();
+                    else if (startSearch.getText().equals("Resume"))
+                        resumeSearch();
+                }
+        );
         startSearch.setFont(new Font("plain", Font.BOLD, 13));
         startSearch.setForeground(defaultButtonTextColor);
         startSearch.setOpaque(false);
@@ -81,17 +78,16 @@ public class ControlPanel extends JPanel {
     
     private JButton createMazeButton() {
         JButton createMaze = new JButton("Create Maze");
-        createMaze.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(createMaze.getText().equals("Create Maze"))
-                    createMaze();
-                else if (createMaze.getText().equals("Pause"))
-                    pauseMaze();
-                else if (createMaze.getText().equals("Resume"))
-                    resumeMaze();
-            }
-        });
+        createMaze.addActionListener(
+                event -> {
+                    if(createMaze.getText().equals("Create Maze"))
+                        createMaze();
+                    else if (createMaze.getText().equals("Pause"))
+                        pauseMaze();
+                    else if (createMaze.getText().equals("Resume"))
+                        resumeMaze();
+                }
+        );
         createMaze.setFont(new Font("plain", Font.BOLD, 13));
         createMaze.setForeground(defaultButtonTextColor);
         createMaze.setOpaque(false);
@@ -104,41 +100,37 @@ public class ControlPanel extends JPanel {
         algoPanel.setOpaque(false);
 
         JButton selectBFS = new JButton("BFS");
-        selectBFS.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                defaultTextColors();
-                selectedAlgorithm = "BFS";
-                selectBFS.setForeground(  new Color(0, 175, 0, 255)  );
-            }
-        });
+        selectBFS.addActionListener(
+                event -> {
+                    defaultTextColors();
+                    selectedAlgorithm = "BFS";
+                    selectBFS.setForeground(  new Color(0, 175, 0, 255)  );
+                }
+        );
         JButton selectDFS = new JButton("DFS");
-        selectDFS.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                defaultTextColors();
-                selectedAlgorithm = "DFS";
-                selectDFS.setForeground(  new Color(0, 175, 0, 255)  );
-            }
-        });
+        selectDFS.addActionListener(
+                event -> {
+                    defaultTextColors();
+                    selectedAlgorithm = "DFS";
+                    selectDFS.setForeground(  new Color(0, 175, 0, 255)  );
+                }
+        );
         JButton selectDijkstra = new JButton("Dijkstra");
-        selectDijkstra.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                defaultTextColors();
-                selectedAlgorithm = "Dijkstra";
-                selectDijkstra.setForeground(  new Color(0, 175, 0, 255)  );
-            }
-        });
+        selectDijkstra.addActionListener(
+                event -> {
+                    defaultTextColors();
+                    selectedAlgorithm = "Dijkstra";
+                    selectDijkstra.setForeground(  new Color(0, 175, 0, 255)  );
+                }
+        );
         JButton selectA_star = new JButton("A*");
-        selectA_star.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                defaultTextColors();
-                selectedAlgorithm = "A*";
-                selectA_star.setForeground(  new Color(0, 175, 0, 255)  );
-            }
-        });
+        selectA_star.addActionListener(
+                event -> {
+                    defaultTextColors();
+                    selectedAlgorithm = "A*";
+                    selectA_star.setForeground(  new Color(0, 175, 0, 255)  );
+                }
+        );
 
         algorithmSelectButtons = new LinkedList<>();
         algorithmSelectButtons.add(selectBFS);
@@ -161,19 +153,10 @@ public class ControlPanel extends JPanel {
         JButton clearObstacles, clearPath;
 
         clearObstacles = new JButton("Clear walls");
-        clearObstacles.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                imagePanel.clearWalls();
-            }
-        });
+        clearObstacles.addActionListener( event -> imagePanel.clearWalls() );
+
         clearPath = new JButton("Clear path");
-        clearPath.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                imagePanel.clearPath();
-            }
-        });
+        clearPath.addActionListener( event -> imagePanel.clearPath() );
 
         clearObstacles.setFont(new Font("plain", Font.BOLD, 13));
         clearPath.setFont(new Font("plain", Font.BOLD, 13));
@@ -196,12 +179,7 @@ public class ControlPanel extends JPanel {
         label.setForeground( new Color(0xffbbbbbb) );
 
         JSlider slider = new JSlider(0, 50, 25);
-        slider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                imagePanel.setFrameDelay(slider.getValue());
-            }
-        });;
+        slider.addChangeListener(  event -> imagePanel.setFrameDelay(slider.getValue()) );
         slider.setMinorTickSpacing(1);
         slider.setPaintTicks(true);
         slider.setSnapToTicks(true);
@@ -222,21 +200,19 @@ public class ControlPanel extends JPanel {
         label.setForeground( new Color(0xffbbbbbb) );
 
         JSlider slider = new JSlider(2, 120, 60);
+        String numRows_str = String.valueOf(imagePanel.getHeight() / slider.getValue() + 1);
+        String numCols_str = String.valueOf(imagePanel.getWidth() / slider.getValue() + 1);
+        label.setText(" " + numRows_str + " rows , " + numCols_str  + " columns ");
 
-        String numRows = String.valueOf(imagePanel.getHeight() / slider.getValue() + 1);
-        String numCols = String.valueOf(imagePanel.getWidth() / slider.getValue() + 1);
-        label.setText(" " + numRows + " rows , " + numCols  + " columns ");
-
-        slider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                int size = slider.getValue();
-                imagePanel.updateCellSize( size );
-                int numRows = imagePanel.getHeight() / size + 1;
-                int numCols = imagePanel.getWidth() / size + 1;
-                label.setText(" " + numRows + " rows , " + numCols  + " columns ");
-            }
-        });;
+        slider.addChangeListener(
+                event -> {
+                    int size = slider.getValue();
+                    imagePanel.updateCellSize( size );
+                    int numRows = imagePanel.getHeight() / size + 1;
+                    int numCols = imagePanel.getWidth() / size + 1;
+                    label.setText(" " + numRows + " rows , " + numCols  + " columns ");
+                }
+        );
 
         slider.setMinorTickSpacing(3);
         slider.setPaintTicks(true);
@@ -315,12 +291,7 @@ public class ControlPanel extends JPanel {
         createMazeButton.setText( "Pause");
         createMazeButton.setForeground(  Color.RED  );
         imagePanel.setSearchState(true);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                 imagePanel.createMaze();
-            }
-        }).start();
+        new Thread( () -> imagePanel.createMaze() ).start();
     }
 
     public void pauseMaze() {
@@ -347,21 +318,14 @@ public class ControlPanel extends JPanel {
         imagePanel.clearPath();
         imagePanel.setSearchState(true);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if(selectedAlgorithm.equals("BFS"))
-                    imagePanel.BFS();
-                else if (selectedAlgorithm.equals("DFS"))
-                    imagePanel.DFS();
-                else if (selectedAlgorithm.equals("A*"))
-                    imagePanel.A_Star();
-                else if (selectedAlgorithm.equals("Dijkstra"))
-                    imagePanel.Dijkstra();
-                else
-                    readySearch();
+        new Thread( () -> {
+                if      (selectedAlgorithm.equals("BFS"))        imagePanel.BFS();
+                else if (selectedAlgorithm.equals("DFS"))        imagePanel.DFS();
+                else if (selectedAlgorithm.equals("A*"))         imagePanel.A_Star();
+                else if (selectedAlgorithm.equals("Dijkstra"))   imagePanel.Dijkstra();
+                else                                             readySearch();
             }
-        }).start();
+        ).start();
     }
 
 }

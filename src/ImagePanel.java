@@ -27,7 +27,6 @@ public class ImagePanel extends JLayeredPane {
     private ControlPanel controlPanel;
     private boolean draggingStart = false, draggingEnd  = false;
     private boolean drawingWalls  = false, erasingWalls = false;
-    private boolean isRunning = false;
     private int frameDelay_ms = 25;
 
     public ImagePanel(int width, int height) {
@@ -107,7 +106,6 @@ public class ImagePanel extends JLayeredPane {
             g2d.drawLine(i, 0, i, imgHeight);
     }
 
-
     private void drawCell(Node cell, Color color, int delay) {
 
         if(grid.isStartPoint(cell) || grid.isEndPoint(cell))
@@ -137,8 +135,7 @@ public class ImagePanel extends JLayeredPane {
             drawCell(node, pathColors[--index], frameDelay_ms * 5);
         }
 
-        controlPanel.readySearch();
-        isRunning = false;
+        controlPanel.searchComplete();
     }
 
     private int getPathLength(Node node) {
@@ -224,13 +221,7 @@ public class ImagePanel extends JLayeredPane {
     }
 
     public boolean paused() {
-        if( isRunning )
-            return false;
-        try {
-             Thread.sleep(50);
-        }
-        catch(InterruptedException e) {}
-        return isRunning == false;
+        return !controlPanel.isRunning();
     }
 
     public void Dijkstra() {
@@ -427,32 +418,27 @@ public class ImagePanel extends JLayeredPane {
         
             for(int z = 0; z < curr.neighbors.size(); z++) {
                 int v = (z + rand_neighbor) % curr.neighbors.size();
-
-                    Node n = curr.neighbors.get(v);
-                    if(flag)
-                        vis[n.x][n.y] = true;
-                    else if(!vis[n.x][n.y] ) {
-                        stack.push(curr);
-                        vis[curr.x][curr.y] = true;
-                        prev = curr;
-                        curr = n;
-                        vis[curr.x][curr.y] = true;
-                        flag = true;
-                        distanceFromStart++;
-                    }
-                    curr.isPassable = true;
-                    drawCell(prev, cellColors[distanceFromStart], 0);
-                    drawCell(curr, passable_color, frameDelay_ms);
+                Node n = curr.neighbors.get(v);
+                if(flag)
+                    vis[n.x][n.y] = true;
+                else if(!vis[n.x][n.y] ) {
+                    stack.push(curr);
+                    vis[curr.x][curr.y] = true;
+                    prev = curr;
+                    curr = n;
+                    vis[curr.x][curr.y] = true;
+                    flag = true;
+                    distanceFromStart++;
+                }
+                curr.isPassable = true;
+                drawCell(prev, cellColors[distanceFromStart], 0);
+                drawCell(curr, passable_color, frameDelay_ms);
             }
             if( !flag ) 
                 curr = stack.pop();
         }
 
-        controlPanel.readyMaze();
-    }
-
-    public void setSearchState(boolean isRunning) {
-        this.isRunning = isRunning;
+        controlPanel.mazeCreationComplete();
     }
 
     public void setFrameDelay(int delay) { 

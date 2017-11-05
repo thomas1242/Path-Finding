@@ -12,6 +12,7 @@ public class ControlPanel extends JPanel {
     private String selectedAlgorithm = "BFS";
     private Color defaultButtonTextColor = new Color(0, 0, 0, 250);
     private int x, y, curr_x, curr_y, width, height;
+    private boolean isRunning = false;
 
     public ControlPanel(ImagePanel imagePanel) {
         this.imagePanel = imagePanel;
@@ -63,7 +64,7 @@ public class ControlPanel extends JPanel {
                 event -> {
                     String state = startSearchButton.getText();
                     if (state.equals("Start search"))
-                        runSearch();
+                        startSearch();
                     else if (state.equals("Pause"))
                         pauseSearch();
                     else if (state.equals("Resume"))
@@ -85,9 +86,9 @@ public class ControlPanel extends JPanel {
                     if(state.equals("Create Maze"))
                         createMaze();
                     else if (state.equals("Pause"))
-                        pauseMaze();
+                        pauseMazeCreation();
                     else if (state.equals("Resume"))
-                        resumeMaze();
+                        resumeMazeCreation();
                 }
         );
         createMazeButton.setFont(new Font("plain", Font.BOLD, 13));
@@ -103,10 +104,13 @@ public class ControlPanel extends JPanel {
 
         JButton selectBFS = new JButton("BFS");
         selectBFS.addActionListener(event -> selectAlgorithm(selectBFS));
+
         JButton selectDFS = new JButton("DFS");
         selectDFS.addActionListener(event -> selectAlgorithm(selectDFS));
+
         JButton selectDijkstra = new JButton("Dijkstra");
         selectDijkstra.addActionListener(event -> selectAlgorithm(selectDijkstra));
+
         JButton selectA_star = new JButton("A*");
         selectA_star.addActionListener(event -> selectAlgorithm(selectA_star));
 
@@ -129,7 +133,7 @@ public class ControlPanel extends JPanel {
     private void selectAlgorithm(JButton button) {
         this.selectedAlgorithm = button.getText();
         defaultTextColors();
-        button.setForeground(  new Color(0, 175, 0, 255)  );
+        button.setForeground( new Color(0, 175, 0, 255) );
     }
     
     private JPanel createClearPanel() {
@@ -242,74 +246,63 @@ public class ControlPanel extends JPanel {
             button.setForeground(defaultButtonTextColor);
     }
 
-    public void setSearchText(String s, Color c) {
-        startSearchButton.setText(s);
-        startSearchButton.setForeground(c);
+    private void updateButtonTextAndColor(JButton btn, String text, Color color) {
+        btn.setText(text);
+        btn.setForeground(color);
     }
 
-    public void setMazeText(String s, Color c) {
-        createMazeButton.setText(s);
-        createMazeButton.setForeground(c);
-    }
+    public void startSearch() {
+        updateButtonTextAndColor(startSearchButton,"Pause", Color.RED);
+        imagePanel.clearPath();
+        isRunning = true;
 
-    public void runSearch() {
-        startSearchButton.setText( "Pause" );
-        startSearchButton.setForeground(  Color.RED  );
-        imagePanel.setSearchState(true);
-        doSearch();
+        new Thread( () -> {
+            if      (selectedAlgorithm.equals("BFS"))        imagePanel.BFS();
+            else if (selectedAlgorithm.equals("DFS"))        imagePanel.DFS();
+            else if (selectedAlgorithm.equals("A*"))         imagePanel.A_Star();
+            else if (selectedAlgorithm.equals("Dijkstra"))   imagePanel.Dijkstra();
+        }).start();
     }
 
     public void pauseSearch() {
-        startSearchButton.setText( "Resume" );
-        startSearchButton.setForeground(  new Color(0, 175, 0, 255)  );
-        imagePanel.setSearchState(false);
+        updateButtonTextAndColor(startSearchButton, "Resume", new Color(0, 175, 0, 255));
+        isRunning = false;
     }
 
     public void resumeSearch() {
-        startSearchButton.setText( "Pause" );
-        startSearchButton.setForeground(  Color.RED  );
-        imagePanel.setSearchState(true);
+        updateButtonTextAndColor(startSearchButton, "Pause", Color.RED);
+        isRunning = true;
     }
 
     public void createMaze() {
-        createMazeButton.setText( "Pause" );
-        createMazeButton.setForeground(  Color.RED  );
-        imagePanel.setSearchState(true);
+        updateButtonTextAndColor(createMazeButton, "Pause", Color.RED);
         new Thread( () -> imagePanel.createMaze() ).start();
+        isRunning = true;
     }
 
-    public void pauseMaze() {
-        createMazeButton.setText( "Resume" );
-        createMazeButton.setForeground(  new Color(0, 175, 0, 255)  );
-        imagePanel.setSearchState(false);
+    public void pauseMazeCreation() {
+        updateButtonTextAndColor(createMazeButton, "Resume", new Color(0, 175, 0, 255));
+        isRunning = false;
     }
 
-    public void resumeMaze() {
-        createMazeButton.setText( "Pause" );
-        createMazeButton.setForeground(  Color.RED  );
-        imagePanel.setSearchState(true);
+    public void resumeMazeCreation() {
+        updateButtonTextAndColor(createMazeButton, "Pause", Color.RED);
+        isRunning = true;
     }
 
-    public void readyMaze() {
-        setMazeText("Create Maze", defaultButtonTextColor);
+    public void mazeCreationComplete() {
+        updateButtonTextAndColor(createMazeButton,"Create Maze", defaultButtonTextColor);
     }
 
-    public void readySearch() {
-        setSearchText("Start search", defaultButtonTextColor);
+    public void searchComplete() {
+        updateButtonTextAndColor(startSearchButton,"Start search", defaultButtonTextColor);
     }
 
-    private void doSearch() {
-        imagePanel.clearPath();
-        imagePanel.setSearchState(true);
-
-        new Thread( () -> {
-                if      (selectedAlgorithm.equals("BFS"))        imagePanel.BFS();
-                else if (selectedAlgorithm.equals("DFS"))        imagePanel.DFS();
-                else if (selectedAlgorithm.equals("A*"))         imagePanel.A_Star();
-                else if (selectedAlgorithm.equals("Dijkstra"))   imagePanel.Dijkstra();
-                else    readySearch();
-            }
-        ).start();
+    public boolean isRunning() {
+        if(isRunning) return true;
+        try { Thread.sleep(50); }
+        catch(InterruptedException e) {}
+        return false;
     }
 
 }

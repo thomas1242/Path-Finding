@@ -65,10 +65,6 @@ public class Grid  {
         return grid;
     }
 
-    public Node nodeAt(int x, int y) {
-        return grid[x][y];
-    }
-
     public void makeNodePassable(int x, int y) {
         grid[x][y].isPassable = true;
     }
@@ -96,38 +92,32 @@ public class Grid  {
         }
     }
 
-    public int numRows() {
+    public int getNumRows() {
         return grid.length;
     }
-
-    public int numCols() {
+    public int getNumCols() {
         return grid[0].length;
     }
-
     public Node getCenterNode() {
         return grid[ grid.length / 2 ][ grid[0].length / 2 ];
     }
 
     public void AstarReset() {
-        for (int i = 0; i < grid.length; i++ ) {
-            for (int j = 0; j < grid[0].length; j++ ) {
-                if( !(grid[i][j].equals(startPoint) || grid[i][j].equals(endPoint)) ) {
+        for (int i = 0; i < grid.length; i++ )
+            for (int j = 0; j < grid[0].length; j++ )
+                if( !(isStartPoint(i, j) || isEndPoint(i, j)) ) {
                     grid[i][j].g = Double.MAX_VALUE;
                     grid[i][j].f = Double.MAX_VALUE;
                 }
-            }
-        }
     }
 
     public void MazeReset() {
-        for (int i = 0; i < grid.length; i++ ) {
-            for (int j = 0; j < grid[0].length; j++ ) {
-                if( !(grid[i][j].equals(startPoint) || grid[i][j].equals(endPoint)) ) {
+        for (int i = 0; i < grid.length; i++ )
+            for (int j = 0; j < grid[0].length; j++ )
+                if( !(isStartPoint(i, j) || isEndPoint(i, j)) ) {
                     grid[i][j].isPassable = false;
                     grid[i][j].isVisited = false;
                 }
-            }
-        }
     }
 
     public boolean isStartPoint(int x, int y) {
@@ -141,5 +131,4 @@ public class Grid  {
     public boolean isEndPoint(Node node) {
         return endPoint.x == node.x && endPoint.y == node.y;
     }
-
 }

@@ -13,12 +13,8 @@ class Node {
         this.x = x;
         this.y = y;
         isPassable = true;
-        neighbors = new LinkedList<Node>();
+        neighbors = new LinkedList<>();
         f = g = Double.POSITIVE_INFINITY;
-    }
-
-    public boolean equals(Node c) {
-        return  (c.x == this.x && c.y == this.y);
     }
 
 }

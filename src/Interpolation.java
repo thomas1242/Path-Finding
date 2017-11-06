@@ -4,18 +4,18 @@ public class Interpolation {
 
     private Interpolation() {}
 
-    public static Color[] getColors(Color start, Color end, int length) {
-        return getColors(start.getRGB(), end.getRGB(), length);
+    public static Color[] interpolateColors(Color start, Color end, int length) {
+        return interpolateColors(start.getRGB(), end.getRGB(), length);
     }
 
-    public static Color[] getColors(int start, int end, int length) {
+    public static Color[] interpolateColors(int start, int end, int length) {
         Color[] colors = new Color[length];
 
         double value_R = (start >> 16) & 0xFF;
         double value_G = (start >> 8 ) & 0xFF;
         double value_B = (start      ) & 0xFF;
 
-        // fill 1D array with interpolated Colors
+        // fill 1D array with interpolated colors
         colors[0] = new Color(start);
         colors[colors.length - 1] = new Color(end);
         double[] deltas = getDeltas( start, end, colors.length - 1 );

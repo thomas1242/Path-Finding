@@ -205,7 +205,8 @@ public class ImagePanel extends JLayeredPane {
             }
         }
 
-        drawPath(curr);
+        if(curr == grid.getEndPoint())
+            drawPath(curr);
     }
 
     public void A_Star() {
@@ -257,7 +258,8 @@ public class ImagePanel extends JLayeredPane {
             }
         }
 
-        drawPath(curr);
+        if(curr == grid.getEndPoint())
+            drawPath(curr);
     }
 
     private double distance_between(Node a, Node b) {
@@ -305,7 +307,8 @@ public class ImagePanel extends JLayeredPane {
             }
         }
 
-        drawPath(curr);
+        if(curr == grid.getEndPoint())
+            drawPath(curr);
     }
 
     public void DFS() {
@@ -336,8 +339,8 @@ public class ImagePanel extends JLayeredPane {
                 }
             }
         }
-
-        drawPath(curr);
+        if(curr == grid.getEndPoint())
+            drawPath(curr);
     }
 
     public void createMaze() {

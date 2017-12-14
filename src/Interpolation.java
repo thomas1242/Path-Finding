@@ -2,8 +2,6 @@ import java.awt.*;
 
 public class Interpolation {
 
-    private Interpolation() {}
-
     public static Color[] interpolateColors(Color start, Color end, int length) {
         return interpolateColors(start.getRGB(), end.getRGB(), length);
     }
@@ -39,5 +37,7 @@ public class Interpolation {
 
         return new double[]{ delta_R, delta_G, delta_B };
     }
+
+    private Interpolation() {}
 
 }

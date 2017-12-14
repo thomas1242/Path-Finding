@@ -61,15 +61,15 @@ public class ControlPanel extends JPanel {
         JButton startSearchButton = new JButton("Start search");
         startSearchButton.setForeground(  new Color(0, 175, 0, 255)  );
         startSearchButton.addActionListener(
-                event -> {
-                    String state = startSearchButton.getText();
-                    if (state.equals("Start search"))
-                        startSearch();
-                    else if (state.equals("Pause"))
-                        pauseSearch();
-                    else if (state.equals("Resume"))
-                        resumeSearch();
-                }
+            event -> {
+                String state = startSearchButton.getText();
+                if (state.equals("Start search"))
+                    startSearch();
+                else if (state.equals("Pause"))
+                    pauseSearch();
+                else if (state.equals("Resume"))
+                    resumeSearch();
+            }
         );
         startSearchButton.setFont(new Font("plain", Font.BOLD, 13));
         startSearchButton.setForeground(defaultButtonTextColor);
@@ -80,15 +80,15 @@ public class ControlPanel extends JPanel {
     private JButton createMazeButton() {
         JButton createMazeButton = new JButton("Create Maze");
         createMazeButton.addActionListener(
-                event -> {
-                    String state = createMazeButton.getText();
-                    if(state.equals("Create Maze"))
-                        startMazeCreation();
-                    else if (state.equals("Pause"))
-                        pauseMazeCreation();
-                    else if (state.equals("Resume"))
-                        resumeMazeCreation();
-                }
+            event -> {
+                String state = createMazeButton.getText();
+                if(state.equals("Create Maze"))
+                    startMazeCreation();
+                else if (state.equals("Pause"))
+                    pauseMazeCreation();
+                else if (state.equals("Resume"))
+                    resumeMazeCreation();
+            }
         );
         createMazeButton.setFont(new Font("plain", Font.BOLD, 13));
         createMazeButton.setForeground(defaultButtonTextColor);
@@ -162,7 +162,7 @@ public class ControlPanel extends JPanel {
         label.setForeground( new Color(0xffbbbbbb) );
 
         JSlider slider = new JSlider(0, 50, 25);
-        slider.addChangeListener(  event -> imagePanel.setFrameDelay(slider.getValue()) );
+        slider.addChangeListener(event -> imagePanel.setFrameDelay(slider.getMaximum() - slider.getValue()));
         slider.setMinorTickSpacing(1);
         slider.setPaintTicks(true);
         slider.setSnapToTicks(true);
@@ -183,13 +183,13 @@ public class ControlPanel extends JPanel {
         slider.setPaintTicks(true);
         slider.setSnapToTicks(true);
         slider.addChangeListener(
-                event -> {
-                    int size = slider.getValue();
-                    imagePanel.updateCellSize( size );
-                    int numRows = imagePanel.getHeight() / size + 1;
-                    int numCols = imagePanel.getWidth() / size + 1;
-                    label.setText(" " + numRows + " rows , " + numCols  + " columns ");
-                }
+            event -> {
+                int cellWidth = slider.getMaximum() + slider.getMinimum() - slider.getValue();
+                int numRows = imagePanel.getHeight() / cellWidth + 1;
+                int numCols = imagePanel.getWidth() / cellWidth + 1;
+                imagePanel.updateCellSize( cellWidth );
+                label.setText(" " + numRows + " rows, " + numCols  + " columns ");
+            }
         );
 
         JPanel sizeSliderPanel = new JPanel();
@@ -241,10 +241,14 @@ public class ControlPanel extends JPanel {
         imagePanel.clearPath();
         new Thread( () -> {
             setButtonTextAndColor(startSearchButton,"Pause", Color.RED);
-            if      (selectedAlgorithm.equals("BFS"))        imagePanel.BFS();
-            else if (selectedAlgorithm.equals("DFS"))        imagePanel.DFS();
-            else if (selectedAlgorithm.equals("A*"))         imagePanel.A_Star();
-            else if (selectedAlgorithm.equals("Dijkstra"))   imagePanel.Dijkstra();
+            if (selectedAlgorithm.equals("BFS"))        
+                imagePanel.BFS();
+            else if (selectedAlgorithm.equals("DFS"))        
+                imagePanel.DFS();
+            else if (selectedAlgorithm.equals("A*"))         
+                imagePanel.A_Star();
+            else if (selectedAlgorithm.equals("Dijkstra"))   
+                imagePanel.Dijkstra();
             setButtonTextAndColor(startSearchButton,"Start search", defaultButtonTextColor);
         }).start();
         isRunning = true;

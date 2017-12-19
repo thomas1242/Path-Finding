@@ -16,14 +16,14 @@ public class Interpolation {
         double G = startRGB >> 8  & 0xFF;
         double B = startRGB       & 0xFF;
 
-        double delta_R = ((endRGB >> 16 & 0xFF) - (startRGB >> 16 & 0xFF)) / 1.0 / length;      
-        double delta_G = ((endRGB >> 8  & 0xFF) - (startRGB >> 8  & 0xFF)) / 1.0 / length;
-        double delta_B = ((endRGB       & 0xFF) - (startRGB       & 0xFF)) / 1.0 / length;
+        double deltaR = ((endRGB >> 16 & 0xFF) - (startRGB >> 16 & 0xFF)) / 1.0 / length;      
+        double deltaG = ((endRGB >> 8  & 0xFF) - (startRGB >> 8  & 0xFF)) / 1.0 / length;
+        double deltaB = ((endRGB       & 0xFF) - (startRGB       & 0xFF)) / 1.0 / length;
 
         for (int i = 1; i < length - 1; i++) {   // fill 1D array with interpolated colors
-            R += delta_R;
-            G += delta_G;
-            B += delta_B;
+            R += deltaR;
+            G += deltaG;
+            B += deltaB;
 
             int intARGB = 0xFF << 24 | (int)R << 16 | (int)G << 8 | (int)B;
             colors[i] = new Color( intARGB );

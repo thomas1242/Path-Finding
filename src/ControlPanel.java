@@ -56,7 +56,7 @@ public class ControlPanel extends JPanel {
         add(clearPanel);
         add(createMazeButton);
     }
-    
+
     private JButton createStartSearchButton() {
         JButton startSearchButton = new JButton("Start search");
         startSearchButton.setForeground(  new Color(0, 175, 0, 255)  );
@@ -76,7 +76,7 @@ public class ControlPanel extends JPanel {
         startSearchButton.setOpaque(false);
         return startSearchButton;
     }
-    
+
     private JButton createMazeButton() {
         JButton createMazeButton = new JButton("Create Maze");
         createMazeButton.addActionListener(
@@ -95,7 +95,7 @@ public class ControlPanel extends JPanel {
         createMazeButton.setOpaque(false);
         return createMazeButton;
     }
-    
+
     private JPanel createAlgorithmPanel() {
         JPanel algoPanel = new JPanel(new GridLayout(0, 2));
         algoPanel.setOpaque(false);
@@ -133,7 +133,7 @@ public class ControlPanel extends JPanel {
         useDefaultTextColors();
         button.setForeground( new Color(0, 175, 0, 255) );
     }
-    
+
     private JPanel createClearPanel() {
         JButton clearObstacles = new JButton("Clear walls");
         JButton clearPath = new JButton("Clear path");
@@ -152,7 +152,7 @@ public class ControlPanel extends JPanel {
         clearPanel.setOpaque(false);
         return clearPanel;
     }
-    
+
     private JPanel createSpeedSliderPanel() {
         JPanel speedSlider = new JPanel();
         speedSlider.setLayout(new GridLayout(0, 1));
@@ -184,7 +184,7 @@ public class ControlPanel extends JPanel {
         slider.setSnapToTicks(true);
         slider.addChangeListener(
             event -> {
-                int cellWidth = slider.getMaximum() + slider.getMinimum() - slider.getValue();
+                int cellWidth =  Math.max(2, slider.getMaximum() - slider.getValue() + 1);
                 int numRows = imagePanel.getHeight() / cellWidth + 1;
                 int numCols = imagePanel.getWidth() / cellWidth + 1;
                 imagePanel.updateCellSize( cellWidth );
@@ -241,13 +241,13 @@ public class ControlPanel extends JPanel {
         imagePanel.clearPath();
         new Thread( () -> {
             setButtonTextAndColor(startSearchButton,"Pause", Color.RED);
-            if (selectedAlgorithm.equals("BFS"))        
+            if (selectedAlgorithm.equals("BFS"))
                 imagePanel.BFS();
-            else if (selectedAlgorithm.equals("DFS"))        
+            else if (selectedAlgorithm.equals("DFS"))
                 imagePanel.DFS();
-            else if (selectedAlgorithm.equals("A*"))         
+            else if (selectedAlgorithm.equals("A*"))
                 imagePanel.A_Star();
-            else if (selectedAlgorithm.equals("Dijkstra"))   
+            else if (selectedAlgorithm.equals("Dijkstra"))
                 imagePanel.Dijkstra();
             setButtonTextAndColor(startSearchButton,"Start search", defaultButtonTextColor);
         }).start();

@@ -6,14 +6,14 @@ import java.awt.image.BufferedImage;
 
 public class ImagePanel extends JLayeredPane {
 
-    private BufferedImage image = null;
-    private Graphics2D g2d = null;
+    private BufferedImage image;
+    private Graphics2D g2d;
 
-    private Grid grid = null;
+    private Grid grid;
     private int cellWidth_pixels = 60;
-    private Color[] cellColors = null;
+    private Color[] cellColors;
 
-    private ControlPanel controlPanel = null;
+    private ControlPanel controlPanel;
     private boolean draggingStart = false, draggingEnd  = false;
     private boolean drawingWalls  = false, erasingWalls = false;
     private int frameDelay_ms = 25;

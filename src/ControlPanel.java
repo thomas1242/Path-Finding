@@ -16,7 +16,7 @@ public class ControlPanel extends JPanel {
 
     public ControlPanel(ImagePanel imagePanel) {
         this.imagePanel = imagePanel;
-        setInitialPosition();
+        setPositionAndSize();
         addComponents();
         addMouseListeners();
         drawBackground(new Color(50, 50, 50, 200));
@@ -29,7 +29,7 @@ public class ControlPanel extends JPanel {
         setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220,  32), 6));
     }
 
-    private void setInitialPosition() {
+    private void setPositionAndSize() {
         width = (int)(imagePanel.getWidth() * .175);
         height = (int)(imagePanel.getHeight() * .5);
         x = curr_x = (int)(imagePanel.getWidth() * 0.8);
@@ -100,25 +100,14 @@ public class ControlPanel extends JPanel {
         JPanel algoPanel = new JPanel(new GridLayout(0, 2));
         algoPanel.setOpaque(false);
 
-        JButton selectBFS = new JButton("BFS");
-        selectBFS.addActionListener(event -> selectAlgorithm(selectBFS));
-
-        JButton selectDFS = new JButton("DFS");
-        selectDFS.addActionListener(event -> selectAlgorithm(selectDFS));
-
-        JButton selectDijkstra = new JButton("Dijkstra");
-        selectDijkstra.addActionListener(event -> selectAlgorithm(selectDijkstra));
-
-        JButton selectA_star = new JButton("A*");
-        selectA_star.addActionListener(event -> selectAlgorithm(selectA_star));
-
         algorithmSelectButtons = new LinkedList<>();
-        algorithmSelectButtons.add(selectBFS);
-        algorithmSelectButtons.add(selectDFS);
-        algorithmSelectButtons.add(selectDijkstra);
-        algorithmSelectButtons.add(selectA_star);
+        algorithmSelectButtons.add(new JButton("BFS"));
+        algorithmSelectButtons.add(new JButton("DFS"));
+        algorithmSelectButtons.add(new JButton("Dijkstra"));
+        algorithmSelectButtons.add(new JButton("A*"));
 
         for(JButton button : algorithmSelectButtons) {
+        	button.addActionListener(event -> selectAlgorithm(button));
             button.setFont(new Font("plain", Font.BOLD, 13));
             button.setForeground(defaultButtonTextColor);
             button.setOpaque(false);
@@ -240,7 +229,7 @@ public class ControlPanel extends JPanel {
     public void startSearch() {
         imagePanel.clearPath();
         new Thread( () -> {
-            setButtonTextAndColor(startSearchButton,"Pause", Color.RED);
+            setButtonTextAndColor(startSearchButton, "Pause", Color.RED);
             if (selectedAlgorithm.equals("BFS"))
                 imagePanel.BFS();
             else if (selectedAlgorithm.equals("DFS"))
@@ -249,7 +238,7 @@ public class ControlPanel extends JPanel {
                 imagePanel.A_Star();
             else if (selectedAlgorithm.equals("Dijkstra"))
                 imagePanel.Dijkstra();
-            setButtonTextAndColor(startSearchButton,"Start search", defaultButtonTextColor);
+            setButtonTextAndColor(startSearchButton, "Start search", defaultButtonTextColor);
         }).start();
         isRunning = true;
     }

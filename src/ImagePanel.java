@@ -8,15 +8,14 @@ public class ImagePanel extends JLayeredPane {
 
     private BufferedImage image;
     private Graphics2D g2d;
-
     private Grid grid;
-    private int cellWidth_pixels = 60;
+    private int cellWidth = 60;
+    private int frameDelay_ms = 25;
     private Color[] cellColors;
-
+    
     private ControlPanel controlPanel;
     private boolean draggingStart = false, draggingEnd  = false;
     private boolean drawingWalls  = false, erasingWalls = false;
-    private int frameDelay_ms = 25;
 
     public ImagePanel(int width, int height) {
         setBounds(0, 0, width, height);
@@ -31,8 +30,8 @@ public class ImagePanel extends JLayeredPane {
     }
 
     private void createGrid() {
-        int numRows = image.getWidth() / cellWidth_pixels + 1;
-        int numCols = image.getHeight() / cellWidth_pixels + 1;
+        int numRows = image.getWidth() / cellWidth + 1;
+        int numCols = image.getHeight() / cellWidth + 1;
         grid = new Grid( numRows, numCols );
     }
 
@@ -47,12 +46,12 @@ public class ImagePanel extends JLayeredPane {
 
     private void drawStartPoint() {
         g2d.setColor(start_color);
-        g2d.fillRect(grid.getStartPoint().x * cellWidth_pixels + 1, grid.getStartPoint().y * cellWidth_pixels + 1, cellWidth_pixels - 1, cellWidth_pixels - 1);
+        g2d.fillRect(grid.getStartPoint().x * cellWidth + 1, grid.getStartPoint().y * cellWidth + 1, cellWidth - 1, cellWidth - 1);
     }
 
     private void drawEndPoint() {
         g2d.setColor(end_color);
-        g2d.fillRect(grid.getEndPoint().x * cellWidth_pixels + 1, grid.getEndPoint().y * cellWidth_pixels + 1, cellWidth_pixels - 1, cellWidth_pixels - 1);
+        g2d.fillRect(grid.getEndPoint().x * cellWidth + 1, grid.getEndPoint().y * cellWidth + 1, cellWidth - 1, cellWidth - 1);
     }
 
     private void generateCellColors() {
@@ -90,19 +89,19 @@ public class ImagePanel extends JLayeredPane {
         g2d.setColor(grid_line_color);
 
         int imgWidth = image.getWidth(), imgHeight = image.getHeight();
-        for (int i = 0; i < imgHeight; i += cellWidth_pixels)     
+        for (int i = 0; i < imgHeight; i += cellWidth)     
             g2d.drawLine(0, i, imgWidth, i);
-        for (int i = 0; i < imgWidth;  i += cellWidth_pixels)     
+        for (int i = 0; i < imgWidth;  i += cellWidth)     
             g2d.drawLine(i, 0, i, imgHeight);
     }
 
     private void drawCell(Node cell, Color color, int delay) {
         if(grid.isStartPoint(cell) || grid.isEndPoint(cell)) return;
 
-        int x = cell.x * cellWidth_pixels + 1;
-        int y = cell.y * cellWidth_pixels + 1;
+        int x = cell.x * cellWidth + 1;
+        int y = cell.y * cellWidth + 1;
         g2d.setColor(color);
-        g2d.fillRect(x, y, cellWidth_pixels - 1, cellWidth_pixels - 1);
+        g2d.fillRect(x, y, cellWidth - 1, cellWidth - 1);
         repaint();
 
         try { Thread.sleep(delay); }
@@ -116,15 +115,14 @@ public class ImagePanel extends JLayeredPane {
             public void mouseExited(MouseEvent e) {}
             public void mousePressed(MouseEvent event) {
                 Point point = event.getPoint();
-                int x = (int)point.getX() / cellWidth_pixels;
-                int y = (int)point.getY() / cellWidth_pixels;
+                int x = (int)point.getX() / cellWidth;
+                int y = (int)point.getY() / cellWidth;
 
                 if( !grid.isValidLoc(x, y) ) return;
-
-                if (grid.isStartPoint(x, y))       draggingStart = true;
-                else if (grid.isEndPoint(x, y))    draggingEnd = true;
-                else if (grid.isPassable(x, y))    drawingWalls = true;
-                else if (!grid.isPassable(x, y))   erasingWalls = true;
+                draggingStart =  grid.isStartPoint(x, y);
+                draggingEnd   =  grid.isEndPoint(x, y);   
+                drawingWalls  =  grid.isPassable(x, y);    
+                erasingWalls  = !grid.isPassable(x, y); 
             }
             public void mouseReleased(MouseEvent e) {
                 draggingStart = draggingEnd = drawingWalls = erasingWalls = false;
@@ -135,8 +133,8 @@ public class ImagePanel extends JLayeredPane {
             public void mouseMoved(MouseEvent event) {}
             public void mouseDragged(MouseEvent event) {
                 Point point = event.getPoint();
-                int x = (int) point.getX() / cellWidth_pixels;
-                int y = (int) point.getY() / cellWidth_pixels;
+                int x = (int) point.getX() / cellWidth;
+                int y = (int) point.getY() / cellWidth;
 
                 if(!grid.isValidLoc(x, y) || grid.isStartPoint(x, y) || grid.isEndPoint(x, y)) return;
 
@@ -150,7 +148,7 @@ public class ImagePanel extends JLayeredPane {
     }
 
     public void updateCellSize(int size) {
-        cellWidth_pixels = size;
+        cellWidth = size;
         createGrid();
         generateCellColors();
         drawAll();
@@ -231,7 +229,7 @@ public class ImagePanel extends JLayeredPane {
     }
 
     public void Dijkstra() {
-        BFS(); // ...  
+        BFS(); 
     }
 
     public void A_Star() {
@@ -339,8 +337,7 @@ public class ImagePanel extends JLayeredPane {
                 drawCell(prev, cellColors[distanceFromStart], 0);
                 drawCell(curr, passable_color, frameDelay_ms);
             }
-            if( !flag ) 
-                curr = stack.pop();
+            if( !flag ) curr = stack.pop();
         }
     }
 
@@ -374,5 +371,4 @@ public class ImagePanel extends JLayeredPane {
     private static Color impassable_color =  Color.BLACK;
     private static Color edge_color       =  new Color(0xffFFF1A5);
     private static Color grid_line_color  =  new Color(0, 0, 0, 255);
-
 }

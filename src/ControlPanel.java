@@ -25,7 +25,7 @@ public class ControlPanel extends JPanel {
     }
 
     private void drawBackground(Color color) {
-        setBackground( color );
+        setBackground(color);
         setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220,  32), 6));
     }
 
@@ -38,8 +38,8 @@ public class ControlPanel extends JPanel {
     }
 
     private void addComponents() {
-        this.startSearchButton = createStartSearchButton();
-        this.createMazeButton = createMazeButton();
+        startSearchButton = createStartSearchButton();
+        createMazeButton = createMazeButton();
 
         JLabel algoLabel = createAlgorithmLabel();
         JPanel algoButtonPanel = createAlgorithmPanel();
@@ -62,12 +62,12 @@ public class ControlPanel extends JPanel {
         startSearchButton.setForeground(  new Color(0, 175, 0, 255)  );
         startSearchButton.addActionListener(
             event -> {
-                String state = startSearchButton.getText();
-                if (state.equals("Start search"))
+                String action = startSearchButton.getText();
+                if (action.equals("Start search"))
                     startSearch();
-                else if (state.equals("Pause"))
+                else if (action.equals("Pause"))
                     pauseSearch();
-                else if (state.equals("Resume"))
+                else if (action.equals("Resume"))
                     resumeSearch();
             }
         );
@@ -81,12 +81,12 @@ public class ControlPanel extends JPanel {
         JButton createMazeButton = new JButton("Create Maze");
         createMazeButton.addActionListener(
             event -> {
-                String state = createMazeButton.getText();
-                if(state.equals("Create Maze"))
+                String action = createMazeButton.getText();
+                if(action.equals("Create Maze"))
                     startMazeCreation();
-                else if (state.equals("Pause"))
+                else if (action.equals("Pause"))
                     pauseMazeCreation();
-                else if (state.equals("Resume"))
+                else if (action.equals("Resume"))
                     resumeMazeCreation();
             }
         );
@@ -98,22 +98,20 @@ public class ControlPanel extends JPanel {
 
     private JPanel createAlgorithmPanel() {
         JPanel algoPanel = new JPanel(new GridLayout(0, 2));
-        algoPanel.setOpaque(false);
-
         algorithmSelectButtons = new LinkedList<>();
-        algorithmSelectButtons.add(new JButton("BFS"));
-        algorithmSelectButtons.add(new JButton("DFS"));
-        algorithmSelectButtons.add(new JButton("Dijkstra"));
-        algorithmSelectButtons.add(new JButton("A*"));
 
-        for(JButton button : algorithmSelectButtons) {
-        	button.addActionListener(event -> selectAlgorithm(button));
+        for(String s : new String[]{"BFS", "DFS", "Dijkstra", "A*"}) {
+            JButton button = new JButton(s);
+            button.addActionListener(event -> selectAlgorithm(button));
             button.setFont(new Font("plain", Font.BOLD, 13));
             button.setForeground(defaultButtonTextColor);
             button.setOpaque(false);
+
+            algorithmSelectButtons.add(button);
             algoPanel.add(button);
         }
 
+        algoPanel.setOpaque(false);
         return algoPanel;
     }
 
@@ -165,7 +163,7 @@ public class ControlPanel extends JPanel {
     private JPanel createSizeSliderPanel() {
         JLabel label = new JLabel();
         label.setFont(new Font("plain", Font.BOLD, 14));
-        label.setForeground( new Color(0xffbbbbbb) );
+        label.setForeground(new Color(0xffbbbbbb));
 
         JSlider slider = new JSlider(2, 120, 60);
         slider.setMinorTickSpacing(3);
@@ -193,7 +191,7 @@ public class ControlPanel extends JPanel {
     private JLabel createAlgorithmLabel() {
         JLabel algo_label = new JLabel(" Algorithms");
         algo_label.setFont(new Font("plain", Font.BOLD, 14));
-        algo_label.setForeground( new Color(0xffbbbbbb) );
+        algo_label.setForeground(new Color(0xffbbbbbb));
         return algo_label;
     }
 

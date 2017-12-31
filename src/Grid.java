@@ -57,7 +57,7 @@ public class Grid  {
         setEndPoint((int)(grid.length * 0.65), (int)(grid[0].length * 0.5));
     }
 
-    public int getNumberOfNodes() {
+    public int size() {
         return grid.length * grid[0].length;
     }
 

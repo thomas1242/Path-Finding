@@ -10,7 +10,7 @@ public class ControlPanel extends JPanel {
     private JButton startSearchButton, createMazeButton;
     private List<JButton> algorithmSelectButtons;
     private String selectedAlgorithm = "BFS";
-    private Color defaultButtonTextColor = new Color(0, 0, 0, 250);
+    private Color buttonTextColor = new Color(0, 0, 0, 250);
     private int x, y, curr_x, curr_y, width, height;
     private boolean isRunning = false;
 
@@ -59,7 +59,6 @@ public class ControlPanel extends JPanel {
 
     private JButton createStartSearchButton() {
         JButton startSearchButton = new JButton("Start search");
-        startSearchButton.setForeground(  new Color(0, 175, 0, 255)  );
         startSearchButton.addActionListener(
             event -> {
                 String action = startSearchButton.getText();
@@ -71,9 +70,7 @@ public class ControlPanel extends JPanel {
                     resumeSearch();
             }
         );
-        startSearchButton.setFont(new Font("plain", Font.BOLD, 13));
-        startSearchButton.setForeground(defaultButtonTextColor);
-        startSearchButton.setOpaque(false);
+        setButtonFont(startSearchButton, buttonTextColor, 13);
         return startSearchButton;
     }
 
@@ -90,9 +87,7 @@ public class ControlPanel extends JPanel {
                     resumeMazeCreation();
             }
         );
-        createMazeButton.setFont(new Font("plain", Font.BOLD, 13));
-        createMazeButton.setForeground(defaultButtonTextColor);
-        createMazeButton.setOpaque(false);
+        setButtonFont(createMazeButton, buttonTextColor, 13);
         return createMazeButton;
     }
 
@@ -103,9 +98,7 @@ public class ControlPanel extends JPanel {
         for(String s : new String[]{"BFS", "DFS", "Dijkstra", "A*"}) {
             JButton button = new JButton(s);
             button.addActionListener(event -> selectAlgorithm(button));
-            button.setFont(new Font("plain", Font.BOLD, 13));
-            button.setForeground(defaultButtonTextColor);
-            button.setOpaque(false);
+            setButtonFont(button, buttonTextColor, 13);
 
             algorithmSelectButtons.add(button);
             algoPanel.add(button);
@@ -118,20 +111,33 @@ public class ControlPanel extends JPanel {
     private void selectAlgorithm(JButton button) {
         this.selectedAlgorithm = button.getText();
         useDefaultTextColors();
-        button.setForeground( new Color(0, 175, 0, 255) );
+        button.setForeground(new Color(0, 175, 0, 255));
+    }
+
+    private void setButtonFont(JButton button, Color color, int fontSize) {
+        button.setFont(new Font("plain", Font.BOLD, fontSize));
+        button.setForeground(color);
+        button.setOpaque(false);
+    }
+
+    private void setButtonText(JButton btn, String text, Color color) {
+        btn.setText(text);
+        btn.setForeground(color);
+    }
+
+    private void useDefaultTextColors() {
+        for(JButton button : algorithmSelectButtons)
+            button.setForeground(buttonTextColor);
     }
 
     private JPanel createClearPanel() {
-        JButton clearObstacles = new JButton("Clear walls");
         JButton clearPath = new JButton("Clear path");
+        clearPath.addActionListener(event -> imagePanel.clearPath());
+        setButtonFont(clearPath, buttonTextColor, 13);
 
-        clearObstacles.addActionListener( event -> imagePanel.clearWalls() );
-        clearPath.addActionListener( event -> imagePanel.clearPath() );
-
-        clearObstacles.setFont(new Font("plain", Font.BOLD, 13));
-        clearPath.setFont(new Font("plain", Font.BOLD, 13));
-        clearObstacles.setForeground(defaultButtonTextColor);
-        clearPath.setForeground(defaultButtonTextColor);
+        JButton clearObstacles = new JButton("Clear walls");
+        clearObstacles.addActionListener(event -> imagePanel.clearWalls());
+        setButtonFont(clearObstacles, buttonTextColor, 13);
 
         JPanel clearPanel = new JPanel(new GridLayout(0, 2));
         clearPanel.add(clearObstacles);
@@ -214,20 +220,10 @@ public class ControlPanel extends JPanel {
         } );
     }
 
-    private void useDefaultTextColors() {
-        for(JButton button : algorithmSelectButtons)
-            button.setForeground(defaultButtonTextColor);
-    }
-
-    private void setButtonTextAndColor(JButton btn, String text, Color color) {
-        btn.setText(text);
-        btn.setForeground(color);
-    }
-
     public void startSearch() {
         imagePanel.clearPath();
         new Thread( () -> {
-            setButtonTextAndColor(startSearchButton, "Pause", Color.RED);
+            setButtonText(startSearchButton, "Pause", Color.RED);
             if (selectedAlgorithm.equals("BFS"))
                 imagePanel.BFS();
             else if (selectedAlgorithm.equals("DFS"))
@@ -236,37 +232,37 @@ public class ControlPanel extends JPanel {
                 imagePanel.A_Star();
             else if (selectedAlgorithm.equals("Dijkstra"))
                 imagePanel.Dijkstra();
-            setButtonTextAndColor(startSearchButton, "Start search", defaultButtonTextColor);
+            setButtonText(startSearchButton, "Start search", buttonTextColor);
         }).start();
         isRunning = true;
     }
 
     public void pauseSearch() {
-        setButtonTextAndColor(startSearchButton, "Resume", new Color(0, 175, 0, 255));
+        setButtonText(startSearchButton, "Resume", new Color(0, 175, 0, 255));
         isRunning = false;
     }
 
     public void resumeSearch() {
-        setButtonTextAndColor(startSearchButton, "Pause", Color.RED);
+        setButtonText(startSearchButton, "Pause", Color.RED);
         isRunning = true;
     }
 
     public void startMazeCreation() {
         new Thread( () -> {
-            setButtonTextAndColor(createMazeButton, "Pause", Color.RED);
+            setButtonText(createMazeButton, "Pause", Color.RED);
             imagePanel.createMaze();
-            setButtonTextAndColor(createMazeButton, "Create Maze", defaultButtonTextColor);
+            setButtonText(createMazeButton, "Create Maze", buttonTextColor);
         }).start();
         isRunning = true;
     }
 
     public void pauseMazeCreation() {
-        setButtonTextAndColor(createMazeButton, "Resume", new Color(0, 175, 0, 255));
+        setButtonText(createMazeButton, "Resume", new Color(0, 175, 0, 255));
         isRunning = false;
     }
 
     public void resumeMazeCreation() {
-        setButtonTextAndColor(createMazeButton, "Pause", Color.RED);
+        setButtonText(createMazeButton, "Pause", Color.RED);
         isRunning = true;
     }
 

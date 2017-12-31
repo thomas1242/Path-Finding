@@ -95,28 +95,27 @@ public class Grid  {
     public int getNumRows() {
         return grid.length;
     }
+
     public int getNumCols() {
         return grid[0].length;
     }
+    
     public Node getCenterNode() {
         return grid[ grid.length / 2 ][ grid[0].length / 2 ];
     }
 
-    public void AstarReset() {
+    public void reset(String s) {
         for (int i = 0; i < grid.length; i++ )
             for (int j = 0; j < grid[0].length; j++ )
                 if( !(isStartPoint(i, j) || isEndPoint(i, j)) ) {
-                    grid[i][j].g = Double.MAX_VALUE;
-                    grid[i][j].f = Double.MAX_VALUE;
-                }
-    }
-
-    public void MazeReset() {
-        for (int i = 0; i < grid.length; i++ )
-            for (int j = 0; j < grid[0].length; j++ )
-                if( !(isStartPoint(i, j) || isEndPoint(i, j)) ) {
-                    grid[i][j].isPassable = false;
-                    grid[i][j].isVisited = false;
+                    if(s.equals("Maze")) {
+                        grid[i][j].isPassable = false;
+                        grid[i][j].isVisited = false;
+                    }
+                    else if (s.equals("A*")) {
+                        grid[i][j].g = Double.MAX_VALUE;
+                        grid[i][j].f = Double.MAX_VALUE;
+                    }
                 }
     }
 

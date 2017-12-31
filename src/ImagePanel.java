@@ -2,7 +2,7 @@ import java.util.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 
 public class ImagePanel extends JLayeredPane {
 
@@ -21,15 +21,17 @@ public class ImagePanel extends JLayeredPane {
         setBounds(0, 0, width, height);
         image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         g2d = (Graphics2D)image.getGraphics();
+
         createGrid();
-        generateCellColors();
         addComponents();
         addListeners();
+        generateCellColors();
         drawAll();
     }
 
-    private void createImage() {
-
+    @Override
+    protected void paintComponent(Graphics g) {
+        g.drawImage(image, 0, 0, null);
     }
 
     private void createGrid() {
@@ -41,10 +43,6 @@ public class ImagePanel extends JLayeredPane {
     private void addComponents() {
         controlPanel = new ControlPanel(this);
         add(controlPanel, new Integer(3));
-    }
-
-    protected void paintComponent(Graphics g) {
-        g.drawImage(image, 0, 0, null);
     }
 
     private void drawStartPoint() {
@@ -236,7 +234,7 @@ public class ImagePanel extends JLayeredPane {
     }
 
     public void A_Star() {
-        grid.AstarReset();
+        grid.reset("A*");
         LinkedList<Node> openSet = new LinkedList<>();
         LinkedList<Node> closedSet = new LinkedList<>();
 
@@ -300,7 +298,7 @@ public class ImagePanel extends JLayeredPane {
     }
 
     public void createMaze() {
-        grid.MazeReset();
+        grid.reset("Maze");
         g2d.setColor( impassable_color );
         g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
         drawStartPoint();

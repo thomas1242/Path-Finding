@@ -67,8 +67,7 @@ public class ImagePanel extends JLayeredPane {
     }
 
     private void drawGrid() {
-        g2d.setColor(passable_color);
-        g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
+        drawBackground(passable_color);
 
         Node[][] _grid = grid.getGrid();
         for (int i = 0; i < _grid.length; i++) {
@@ -83,6 +82,11 @@ public class ImagePanel extends JLayeredPane {
             }
         }
         drawGridLines();
+    }
+
+    private void drawBackground(Color backgroundColor) {
+        g2d.setColor(backgroundColor);
+        g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
     }
 
     private void drawGridLines() {
@@ -170,9 +174,8 @@ public class ImagePanel extends JLayeredPane {
     }
 
     public void BFS() {
-        Node startPoint = grid.getStartPoint();
         Queue<Node> q = new LinkedList<>();
-        q.add( startPoint );
+        q.add( grid.getStartPoint() );
 
         int index = 0;
         while( !q.isEmpty() ) {
@@ -201,8 +204,7 @@ public class ImagePanel extends JLayeredPane {
 
     public void DFS() {
         Stack<Node> stack = new Stack<>();
-        Node startPoint = grid.getStartPoint();
-        stack.push( startPoint );
+        stack.push( grid.getStartPoint() );
 
         int index = 0;
         while( !stack.isEmpty() ) {
@@ -280,6 +282,7 @@ public class ImagePanel extends JLayeredPane {
                  n.f = temp + distance_between(n , endPoint);
             }
         }
+
     }
 
     private double distance_between(Node a, Node b) {
@@ -299,39 +302,35 @@ public class ImagePanel extends JLayeredPane {
 
     public void createMaze() {
         grid.reset("Maze");
-        g2d.setColor( impassable_color );
-        g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
+        drawBackground(impassable_color);
         drawStartPoint();
         drawEndPoint();
         repaint();
 
-        int index = 0;
+        Random rand = new Random();
         boolean[][] vis = new boolean[grid.getNumRows()][grid.getNumCols()];
+        int index = 0;
         
         Node curr = grid.getCenterNode();
         Stack<Node> stack = new Stack<>();
         stack.add(curr);
-        Random rand = new Random();
 
         while( !stack.isEmpty() ) {
             while(paused());
 
             boolean flag = false;
-            int rand_neighbor = rand.nextInt(curr.neighbors.size());
+            int randNeighbor = rand.nextInt(curr.neighbors.size());
             Node prev = curr;
         
             for(int z = 0; z < curr.neighbors.size(); z++) {
-                int v = (z + rand_neighbor) % curr.neighbors.size();
-                Node n = curr.neighbors.get(v);
+                Node next = curr.neighbors.get( (z + randNeighbor) % curr.neighbors.size() );
                 if(flag)
-                    vis[n.x][n.y] = true;
-                else if(!vis[n.x][n.y] ) {
+                    vis[next.x][next.y] = true;
+                else if(!vis[next.x][next.y]) {
                     stack.push(curr);
-                    vis[curr.x][curr.y] = true;
+                    vis[curr.x][curr.y] = vis[next.x][next.y] = flag = true;
                     prev = curr;
-                    curr = n;
-                    vis[curr.x][curr.y] = true;
-                    flag = true;
+                    curr = next;
                     index++;
                 }
                 curr.isPassable = true;

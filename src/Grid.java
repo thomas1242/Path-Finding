@@ -15,32 +15,28 @@ public class Grid  {
             for (int j = 0; j < grid[i].length; j++)
                 grid[i][j] = new Node(i, j);
 
-        connectNeighbors();
+        connectAdjacentNodes();
     }
 
-    private void connectNeighbors() {
+    private void connectAdjacentNodes() {
         for (int i = 0; i < grid.length; i++)
             for (int j = 0; j < grid[i].length; j++)
                 for (int n = -1; n <= 1; n++)
-                    for (int m = -1; m <= 1; m++) {
-                        int x_step = i + n;
-                        int y_step = j + m;
-                        if (m == 0 || n == 0)
-                            if ( !(i == x_step && j == y_step) && isValidLoc(x_step, y_step) )
-                                grid[i][j].neighbors.add(grid[x_step][y_step]);
-                    }
+                    for (int m = -1; m <= 1; m++) 
+                        if ((m & n) == 0 && (m | n) != 0 && isValidLoc(i + n, j + m))
+                            grid[i][j].neighbors.add(grid[i + n][j + m]);
     }
 
     public boolean isValidLoc(int x, int y) {
-        return !( x >= grid.length || y >= grid[0].length || x < 0 || y < 0 );
+        return !(x >= grid.length || y >= grid[0].length || x < 0 || y < 0);
     }
 
     public void setStartPoint(int x, int y) {
-        if( isValidLoc(x, y) && grid[x][y].isPassable )
+        if(isValidLoc(x, y) && grid[x][y].isPassable)
             startPoint = grid[x][y];
     }
     public void setEndPoint(int x, int y) {
-        if( isValidLoc(x, y) && grid[x][y].isPassable )
+        if(isValidLoc(x, y) && grid[x][y].isPassable)
             endPoint = grid[x][y];
     }
 
@@ -84,12 +80,9 @@ public class Grid  {
     }
 
     public void clearPath() {
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                grid[i][j].isVisited = false;
-                grid[i][j].isQueued = false;
-            }
-        }
+        for (int i = 0; i < grid.length; i++) 
+            for (int j = 0; j < grid[i].length; j++) 
+                grid[i][j].isVisited = grid[i][j].isQueued = false;
     }
 
     public int getNumRows() {
@@ -107,22 +100,20 @@ public class Grid  {
     public void reset(String s) {
         for (int i = 0; i < grid.length; i++ )
             for (int j = 0; j < grid[0].length; j++ )
-                if( !(isStartPoint(i, j) || isEndPoint(i, j)) ) {
-                    if(s.equals("Maze")) {
-                        grid[i][j].isPassable = false;
-                        grid[i][j].isVisited = false;
-                    }
-                    else if (s.equals("A*")) {
-                        grid[i][j].g = Double.MAX_VALUE;
-                        grid[i][j].f = Double.MAX_VALUE;
-                    }
+                if(!isStartPoint(i, j) && !isEndPoint(i, j)) {
+                    if(s.equals("Maze")) 
+                        grid[i][j].isPassable = grid[i][j].isVisited = false;
+                    else if (s.equals("A*")) 
+                        grid[i][j].g = grid[i][j].f = Double.MAX_VALUE;
                 }
     }
 
     public boolean isStartPoint(int x, int y) {
         return startPoint.x == x && startPoint.y == y;
     }
-    public boolean isStartPoint(Node node) { return startPoint.x == node.x && startPoint.y == node.y; }
+    public boolean isStartPoint(Node node) { 
+        return startPoint.x == node.x && startPoint.y == node.y; 
+    }
 
     public boolean isEndPoint(int x, int y) {
         return endPoint.x == x && endPoint.y == y;

@@ -28,7 +28,7 @@ public class Grid  {
     }
 
     public boolean isValidLoc(int x, int y) {
-        return !(x >= grid.length || y >= grid[0].length || x < 0 || y < 0);
+        return x >= 0 && x < grid.length && y >= 0 && y < grid[0].length;
     }
 
     public void setStartPoint(int x, int y) {

@@ -37,7 +37,7 @@ public class ImagePanel extends JLayeredPane {
     private void createGrid() {
         int numRows = image.getWidth() / cellWidth + 1;
         int numCols = image.getHeight() / cellWidth + 1;
-        grid = new Grid( numRows, numCols );
+        grid = new Grid(numRows, numCols);
     }
 
     private void addComponents() {
@@ -56,7 +56,7 @@ public class ImagePanel extends JLayeredPane {
     }
 
     private void generateCellColors() {
-        cellColors = Interpolation.interpolateColors( 0xffcccccc, 0x0fFFD700, grid.size());
+        cellColors = Interpolation.interpolateColors(0xffcccccc, 0x0fFFD700, grid.size());
     }
 
     private void drawAll() {
@@ -90,7 +90,7 @@ public class ImagePanel extends JLayeredPane {
     }
 
     private void drawGridLines() {
-        g2d.setStroke( new BasicStroke( 1.0f,  BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND ) );
+        g2d.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         g2d.setColor(grid_line_color);
 
         int imgWidth = image.getWidth(), imgHeight = image.getHeight();
@@ -101,7 +101,7 @@ public class ImagePanel extends JLayeredPane {
     }
 
     private void drawCell(Node cell, Color color, int delay) {
-        if(grid.isStartPoint(cell) || grid.isEndPoint(cell)) return;
+        if (grid.isStartPoint(cell) || grid.isEndPoint(cell)) return;
 
         int x = cell.x * cellWidth + 1;
         int y = cell.y * cellWidth + 1;
@@ -123,10 +123,10 @@ public class ImagePanel extends JLayeredPane {
                 int x = (int)point.getX() / cellWidth;
                 int y = (int)point.getY() / cellWidth;
 
-                if( !grid.isValidLoc(x, y) ) return;
+                if (!grid.isValidLoc(x, y)) return;
                 draggingStart =  grid.isStartPoint(x, y);
-                draggingEnd   =  grid.isEndPoint(x, y);   
-                drawingWalls  =  grid.isPassable(x, y);    
+                draggingEnd   =  grid.isEndPoint(x, y);
+                drawingWalls  =  grid.isPassable(x, y);
                 erasingWalls  = !grid.isPassable(x, y); 
             }
             public void mouseReleased(MouseEvent e) {
@@ -141,7 +141,7 @@ public class ImagePanel extends JLayeredPane {
                 int x = (int) point.getX() / cellWidth;
                 int y = (int) point.getY() / cellWidth;
 
-                if(!grid.isValidLoc(x, y) || grid.isStartPoint(x, y) || grid.isEndPoint(x, y)) return;
+                if (!grid.isValidLoc(x, y) || grid.isStartPoint(x, y) || grid.isEndPoint(x, y)) return;
 
                 if (draggingStart)                                  grid.setStartPoint(x, y);
                 else if (draggingEnd)                               grid.setEndPoint(x, y);
@@ -178,20 +178,21 @@ public class ImagePanel extends JLayeredPane {
         q.add( grid.getStartPoint() );
 
         int index = 0;
-        while( !q.isEmpty() ) {
-            while( paused() );
+
+        while (!q.isEmpty()) {
+            while (paused());
 
             Node curr = q.poll();
             curr.isVisited = true;
             drawCell(curr, cellColors[index++ ], frameDelay_ms);
 
-            if(grid.isEndPoint(curr)) {
+            if (grid.isEndPoint(curr)) {
                 drawPath(curr);
                 break;
             }
 
             for (Node n : curr.neighbors) {
-                if(!n.isVisited && n.isPassable) {
+                if (!n.isVisited && n.isPassable) {
                     n.isQueued = true;
                     n.isVisited = true;
                     n.parent = curr;
@@ -207,20 +208,20 @@ public class ImagePanel extends JLayeredPane {
         stack.push( grid.getStartPoint() );
 
         int index = 0;
-        while( !stack.isEmpty() ) {
-            while( paused() );
+        while (!stack.isEmpty()) {
+            while (paused());
 
             Node curr = stack.pop();
             curr.isVisited = true;
             drawCell(curr, cellColors[index++], frameDelay_ms);
 
-            if(grid.isEndPoint(curr)) {
+            if (grid.isEndPoint(curr)) {
                 drawPath(curr);
                 break;
             }
 
             for (Node n : curr.neighbors) {
-                if(!n.isVisited && n.isPassable) {
+                if (!n.isVisited && n.isPassable) {
                     n.isQueued = true;
                     n.isVisited = true;
                     n.parent = curr;
@@ -246,27 +247,27 @@ public class ImagePanel extends JLayeredPane {
         startPoint.f = distance_between(startPoint, endPoint);
 
         int index = 0;
-        while( !openSet.isEmpty() ) {
+        while (!openSet.isEmpty()) {
             while (paused());
             
-            Node curr = openSet.get( getLowest(openSet) );
+            Node curr = openSet.get(getLowest(openSet));
             openSet.remove(curr);
             closedSet.add(curr);
             curr.g = distance_between(startPoint, curr);
             curr.f = distance_between(curr, endPoint);
             drawCell(curr, cellColors[index++ ], frameDelay_ms);
 
-            if(grid.isEndPoint(curr)) {
+            if (grid.isEndPoint(curr)) {
                 drawPath(curr);
                 break;
             }
 
             for (Node n : curr.neighbors) {
-                if(!n.isPassable)
+                if (!n.isPassable)
                     closedSet.add(n);
-                if(closedSet.contains(n))
+                if (closedSet.contains(n))
                     continue;
-                if(!openSet.contains(n))
+                if (!openSet.contains(n))
                     openSet.add(n);
 
                 n.isQueued = true;
@@ -274,7 +275,7 @@ public class ImagePanel extends JLayeredPane {
                 drawCell(n, frontier_color, frameDelay_ms);
 
                 double temp = curr.g + distance_between(curr, n);
-                if(temp >= n.g) // not a better path
+                if (temp >= n.g)
                     continue;
 
                  n.parent = curr;
@@ -292,8 +293,8 @@ public class ImagePanel extends JLayeredPane {
     private int getLowest(LinkedList<Node> list) {
         int index = 0;
         double min = list.get(index).f;
-        for(int i = 1; i < list.size(); i++) {
-            if(list.get(i).f < min) 
+        for (int i = 1; i < list.size(); i++) {
+            if (list.get(i).f < min) 
                 index = i;
             min = Math.min(min, list.get(i).f);
         }
@@ -315,18 +316,18 @@ public class ImagePanel extends JLayeredPane {
         Stack<Node> stack = new Stack<>();
         stack.add(curr);
 
-        while( !stack.isEmpty() ) {
-            while(paused());
+        while (!stack.isEmpty()) {
+            while (paused());
 
             boolean flag = false;
             int randNeighbor = rand.nextInt(curr.neighbors.size());
             Node prev = curr;
         
-            for(int z = 0; z < curr.neighbors.size(); z++) {
+            for (int z = 0; z < curr.neighbors.size(); z++) {
                 Node next = curr.neighbors.get( (z + randNeighbor) % curr.neighbors.size() );
-                if(flag)
+                if (flag)
                     vis[next.x][next.y] = true;
-                else if(!vis[next.x][next.y]) {
+                else if (!vis[next.x][next.y]) {
                     stack.push(curr);
                     vis[curr.x][curr.y] = vis[next.x][next.y] = flag = true;
                     prev = curr;
@@ -337,13 +338,14 @@ public class ImagePanel extends JLayeredPane {
                 drawCell(prev, cellColors[index], 0);
                 drawCell(curr, passable_color, frameDelay_ms);
             }
-            if( !flag ) curr = stack.pop();
+            if (!flag) curr = stack.pop();
         }
     }
 
     private int getPathLength(Node node) {
+        grid.getStartPoint().parent = null;
         int pathLength = 0;
-        while(node != null) {
+        while (node != null) {
             node = node.parent;
             pathLength++;
         }
@@ -351,10 +353,10 @@ public class ImagePanel extends JLayeredPane {
     }
 
     private void drawPath(Node node) {
-        Color[] pathColors = Interpolation.interpolateColors( Color.GREEN, Color.RED, getPathLength(node) );
+        Color[] pathColors = Interpolation.interpolateColors(Color.GREEN, Color.RED, getPathLength(node));
         int index = pathColors.length;
-        while(node.parent != null) {
-            while(paused());
+        while (node.parent != null) {
+            while (paused());
             node = node.parent;
             drawCell(node, pathColors[--index], frameDelay_ms * 5);
         }

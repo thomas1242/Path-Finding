@@ -23,7 +23,7 @@ public class Grid  {
             for (int j = 0; j < grid[i].length; j++)
                 for (int n = -1; n <= 1; n++)
                     for (int m = -1; m <= 1; m++) 
-                        if ((m & n) == 0 && (m | n) != 0 && isValidLoc(i + n, j + m))
+                        if (isValidLoc(i + n, j + m) && (m & n) == 0 && (m | n) != 0)
                             grid[i][j].neighbors.add(grid[i + n][j + m]);
     }
 
@@ -32,11 +32,11 @@ public class Grid  {
     }
 
     public void setStartPoint(int x, int y) {
-        if(isValidLoc(x, y) && grid[x][y].isPassable)
+        if (isValidLoc(x, y) && grid[x][y].isPassable)
             startPoint = grid[x][y];
     }
     public void setEndPoint(int x, int y) {
-        if(isValidLoc(x, y) && grid[x][y].isPassable)
+        if (isValidLoc(x, y) && grid[x][y].isPassable)
             endPoint = grid[x][y];
     }
 
@@ -100,12 +100,10 @@ public class Grid  {
     public void reset(String s) {
         for (int i = 0; i < grid.length; i++ )
             for (int j = 0; j < grid[0].length; j++ )
-                if(!isStartPoint(i, j) && !isEndPoint(i, j)) {
-                    if(s.equals("Maze")) 
-                        grid[i][j].isPassable = grid[i][j].isVisited = false;
-                    else if (s.equals("A*")) 
-                        grid[i][j].g = grid[i][j].f = Double.MAX_VALUE;
-                }
+                if (s.equals("Maze") && !isStartPoint(i, j) && !isEndPoint(i, j)) 
+                    grid[i][j].isPassable = grid[i][j].isVisited = false;
+                else if (s.equals("A*")) 
+                    grid[i][j].g = grid[i][j].f = Double.MAX_VALUE;
     }
 
     public boolean isStartPoint(int x, int y) {

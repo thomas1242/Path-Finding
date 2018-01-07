@@ -10,22 +10,21 @@ public class ControlPanel extends JPanel {
     private JButton startSearchButton, createMazeButton;
     private List<JButton> algorithmSelectButtons;
     private String selectedAlgorithm = "BFS";
-    private Color buttonTextColor = new Color(0, 0, 0, 250);
     private int x, y, curr_x, curr_y, width, height;
     private boolean isRunning = false;
 
     public ControlPanel(ImagePanel imagePanel) {
         this.imagePanel = imagePanel;
+        drawBackground();
         setPositionAndSize();
         addComponents();
         addMouseListeners();
-        drawBackground(new Color(50, 50, 50, 200));
         setVisible(true);
         setOpaque(true);
     }
 
-    private void drawBackground(Color color) {
-        setBackground(color);
+    private void drawBackground() {
+        setBackground(new Color(50, 50, 50, 200));
         setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220,  32), 6));
     }
 
@@ -59,35 +58,31 @@ public class ControlPanel extends JPanel {
 
     private JButton createStartSearchButton() {
         JButton startSearchButton = new JButton("Start search");
-        startSearchButton.addActionListener(
-            event -> {
-                String action = startSearchButton.getText();
-                if (action.equals("Start search"))
-                    startSearch();
-                else if (action.equals("Pause"))
-                    pauseSearch();
-                else if (action.equals("Resume"))
-                    resumeSearch();
-            }
-        );
-        setButtonFont(startSearchButton, buttonTextColor, 13);
+        startSearchButton.addActionListener(event -> {
+            String selection = startSearchButton.getText();
+            if (selection.equals("Start search"))
+                startSearch();
+            else if (selection.equals("Pause"))
+                pauseSearch();
+            else if (selection.equals("Resume"))
+                resumeSearch();
+        });
+        setButtonFont(startSearchButton, Color.BLACK, 13);
         return startSearchButton;
     }
 
     private JButton createMazeButton() {
         JButton createMazeButton = new JButton("Create Maze");
-        createMazeButton.addActionListener(
-            event -> {
-                String action = createMazeButton.getText();
-                if(action.equals("Create Maze"))
-                    startMazeCreation();
-                else if (action.equals("Pause"))
-                    pauseMazeCreation();
-                else if (action.equals("Resume"))
-                    resumeMazeCreation();
-            }
-        );
-        setButtonFont(createMazeButton, buttonTextColor, 13);
+        createMazeButton.addActionListener(event -> {
+            String selection = createMazeButton.getText();
+            if (selection.equals("Create Maze"))
+                startMazeCreation();
+            else if (selection.equals("Pause"))
+                pauseMazeCreation();
+            else if (selection.equals("Resume"))
+                resumeMazeCreation();
+        });
+        setButtonFont(createMazeButton, Color.BLACK, 13);
         return createMazeButton;
     }
 
@@ -95,11 +90,10 @@ public class ControlPanel extends JPanel {
         JPanel algoPanel = new JPanel(new GridLayout(0, 2));
         algorithmSelectButtons = new LinkedList<>();
 
-        for(String s : new String[]{"BFS", "DFS", "Dijkstra", "A*"}) {
+        for (String s : new String[]{"BFS", "DFS", "Dijkstra", "A*"}) {
             JButton button = new JButton(s);
             button.addActionListener(event -> selectAlgorithm(button));
-            setButtonFont(button, buttonTextColor, 13);
-
+            setButtonFont(button, Color.BLACK, 13);
             algorithmSelectButtons.add(button);
             algoPanel.add(button);
         }
@@ -126,18 +120,18 @@ public class ControlPanel extends JPanel {
     }
 
     private void useDefaultTextColors() {
-        for(JButton button : algorithmSelectButtons)
-            button.setForeground(buttonTextColor);
+        for (JButton button : algorithmSelectButtons)
+            button.setForeground(Color.BLACK);
     }
 
     private JPanel createClearPanel() {
         JButton clearPath = new JButton("Clear path");
         clearPath.addActionListener(event -> imagePanel.clearPath());
-        setButtonFont(clearPath, buttonTextColor, 13);
+        setButtonFont(clearPath, Color.BLACK, 13);
 
         JButton clearObstacles = new JButton("Clear walls");
         clearObstacles.addActionListener(event -> imagePanel.clearWalls());
-        setButtonFont(clearObstacles, buttonTextColor, 13);
+        setButtonFont(clearObstacles, Color.BLACK, 13);
 
         JPanel clearPanel = new JPanel(new GridLayout(0, 2));
         clearPanel.add(clearObstacles);
@@ -147,77 +141,71 @@ public class ControlPanel extends JPanel {
     }
 
     private JPanel createSpeedSliderPanel() {
-        JPanel speedSlider = new JPanel();
-        speedSlider.setLayout(new GridLayout(0, 1));
-
-        JLabel label = new JLabel(" Speed");
-        label.setFont(new Font("plain", Font.BOLD, 14));
-        label.setForeground( new Color(0xffbbbbbb) );
-
-        JSlider slider = new JSlider(0, 50, 25);
+        JSlider slider = createSlider(0, 50, 25);
         slider.addChangeListener(event -> imagePanel.setFrameDelay(slider.getMaximum() - slider.getValue()));
-        slider.setMinorTickSpacing(1);
-        slider.setPaintTicks(true);
-        slider.setSnapToTicks(true);
-        speedSlider.add(label, BorderLayout.CENTER);
-        speedSlider.add(slider, BorderLayout.SOUTH);
-        speedSlider.setOpaque(false);
-        speedSlider.setVisible(true);
-        return speedSlider;
+        return createSliderPanel(createLabel(" Speed", new Color(0xffbbbbbb)), slider);
     }
 
     private JPanel createSizeSliderPanel() {
-        JLabel label = new JLabel();
-        label.setFont(new Font("plain", Font.BOLD, 14));
-        label.setForeground(new Color(0xffbbbbbb));
+        JLabel label = createLabel("", new Color(0xffbbbbbb));
+        JSlider slider = createSlider(2, 120, 60);
+        slider.addChangeListener(event -> {
+            int cellWidth =  Math.max(2, slider.getMaximum() - slider.getValue() + 1);
+            int numRows = imagePanel.getHeight() / cellWidth + 1;
+            int numCols = imagePanel.getWidth() / cellWidth + 1;
+            imagePanel.updateCellSize(cellWidth);
+            label.setText(" " + numRows + " rows, " + numCols  + " columns ");
+        });
+        slider.setValue(60);
+        return createSliderPanel(label, slider);
+    }
 
-        JSlider slider = new JSlider(2, 120, 60);
-        slider.setMinorTickSpacing(3);
+    private JSlider createSlider(int low, int high, int value) {
+        JSlider slider = new JSlider();
+        slider.setMinorTickSpacing(1);
         slider.setPaintTicks(true);
         slider.setSnapToTicks(true);
-        slider.addChangeListener(
-            event -> {
-                int cellWidth =  Math.max(2, slider.getMaximum() - slider.getValue() + 1);
-                int numRows = imagePanel.getHeight() / cellWidth + 1;
-                int numCols = imagePanel.getWidth() / cellWidth + 1;
-                imagePanel.updateCellSize( cellWidth );
-                label.setText(" " + numRows + " rows, " + numCols  + " columns ");
-            }
-        );
+        return slider;
+    }
 
-        JPanel sizeSliderPanel = new JPanel();
-        sizeSliderPanel.setLayout(new GridLayout(0, 1));
-        sizeSliderPanel.add(label, BorderLayout.CENTER);
-        sizeSliderPanel.add(slider, BorderLayout.SOUTH);
-        sizeSliderPanel.setOpaque(false );
-        sizeSliderPanel.setVisible(true);
-        return sizeSliderPanel;
+    private JPanel createSliderPanel(JLabel label, JSlider slider) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(0, 1));
+        panel.add(label, BorderLayout.CENTER);
+        panel.add(slider, BorderLayout.SOUTH);
+        panel.setOpaque(false);
+        panel.setVisible(true);
+        return panel;
     }
 
     private JLabel createAlgorithmLabel() {
-        JLabel algo_label = new JLabel(" Algorithms");
-        algo_label.setFont(new Font("plain", Font.BOLD, 14));
-        algo_label.setForeground(new Color(0xffbbbbbb));
-        return algo_label;
+        return createLabel(" Algorithms", new Color(0xffbbbbbb));
+    }
+
+    private JLabel createLabel(String s, Color color) {
+        JLabel label = new JLabel(s);
+        label.setFont(new Font("plain", Font.BOLD, 14));
+        label.setForeground(color);
+        return label;
     }
 
     private void addMouseListeners() {
-        addMouseListener( new MouseAdapter() {
-            public void mousePressed( MouseEvent event ) {
-                if(event.getButton() == MouseEvent.BUTTON1) {
+        addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent event) {
+                if (event.getButton() == MouseEvent.BUTTON1) {
                     x = (int)event.getPoint().getX();
                     y = (int)event.getPoint().getY();
                 }
             }
-        } );
-        addMouseMotionListener( new MouseMotionAdapter() {
+        });
+        addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent event) {
                 Point p = event.getPoint();
                 curr_x += (p.getX() - x);
                 curr_y += (p.getY() - y);
                 setBounds(curr_x, curr_y, width, height);
             }
-        } );
+        });
     }
 
     public void startSearch() {
@@ -232,7 +220,7 @@ public class ControlPanel extends JPanel {
                 imagePanel.A_Star();
             else if (selectedAlgorithm.equals("Dijkstra"))
                 imagePanel.Dijkstra();
-            setButtonText(startSearchButton, "Start search", buttonTextColor);
+            setButtonText(startSearchButton, "Start search", Color.BLACK);
         }).start();
         isRunning = true;
     }
@@ -251,7 +239,7 @@ public class ControlPanel extends JPanel {
         new Thread( () -> {
             setButtonText(createMazeButton, "Pause", Color.RED);
             imagePanel.createMaze();
-            setButtonText(createMazeButton, "Create Maze", buttonTextColor);
+            setButtonText(createMazeButton, "Create Maze", Color.BLACK);
         }).start();
         isRunning = true;
     }
@@ -267,7 +255,7 @@ public class ControlPanel extends JPanel {
     }
 
     public boolean isRunning() {
-        if(isRunning) return true;
+        if (isRunning) return true;
         try { Thread.sleep(32); }
         catch(InterruptedException e) {}
         return false;

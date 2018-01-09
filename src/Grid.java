@@ -19,12 +19,19 @@ public class Grid  {
     }
 
     private void connectAdjacentNodes() {
-        for (int i = 0; i < grid.length; i++)
-            for (int j = 0; j < grid[i].length; j++)
-                for (int n = -1; n <= 1; n++)
-                    for (int m = -1; m <= 1; m++) 
-                        if (isValidLoc(i + n, j + m) && (m & n) == 0 && (m | n) != 0)
-                            grid[i][j].neighbors.add(grid[i + n][j + m]);
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {   
+                if(isValidLoc(i + 1, j))  
+                    addEdge(grid[i][j], grid[i + 1][j]);
+                if(isValidLoc(i, j + 1))  
+                    addEdge(grid[i][j], grid[i][j + 1]);
+           }
+        }
+    }
+
+    private void addEdge(Node a, Node b) {
+        a.neighbors.add(b);
+        b.neighbors.add(a);
     }
 
     public boolean isValidLoc(int x, int y) {

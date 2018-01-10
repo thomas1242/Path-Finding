@@ -1,7 +1,8 @@
-public class Grid  {
+public class Grid {
 
     private Node[][] grid;
-    private Node startPoint, endPoint;
+    private Node startPoint;
+    private Node endPoint;
 
     public Grid(int numRows, int numCols) {
         createGrid(numRows, numCols);
@@ -116,6 +117,7 @@ public class Grid  {
     public boolean isStartPoint(int x, int y) {
         return startPoint.x == x && startPoint.y == y;
     }
+
     public boolean isStartPoint(Node node) { 
         return startPoint.x == node.x && startPoint.y == node.y; 
     }
@@ -123,6 +125,7 @@ public class Grid  {
     public boolean isEndPoint(int x, int y) {
         return endPoint.x == x && endPoint.y == y;
     }
+
     public boolean isEndPoint(Node node) {
         return endPoint.x == node.x && endPoint.y == node.y;
     }

@@ -18,7 +18,7 @@ java -cp Path-Finding/src Main
 ## Usage
 
 * Drag your mouse to draw/erase obstacles. <br>
-* Drag the green/red node to choose the start/end locations. <br>
+* Drag the green/red nodes to choose the start/end locations. <br>
 * Choose an algorithm.<br>
 * Click start search.<br>
 

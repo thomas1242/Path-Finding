@@ -97,6 +97,7 @@ public class ControlPanel extends JPanel {
             algorithmSelectButtons.add(button);
             algoPanel.add(button);
         }
+        selectAlgorithm(algorithmSelectButtons.get(0));
 
         algoPanel.setOpaque(false);
         return algoPanel;
